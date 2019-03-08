@@ -1,0 +1,13 @@
+numpy==1.10.4
+scipy==0.17.0
+matplotlib==1.5.2
+pandas==0.18.0 
+nose #required for pkgconfig
+pkgconfig==1.2.0 #required for h5py
+cython # required for h5py
+h5py==2.6.0
+pysam==0.10.0  
+HTSeq==0.7.2 
+statsmodels==0.6.1
+seaborn==0.7.0
+cutadapt==1.18

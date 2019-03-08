@@ -1,0 +1,172 @@
+#!/usr/bin/env python
+#
+
+import os
+from itertools import izip
+from collections import defaultdict
+
+import matplotlib
+matplotlib.use('Agg')
+
+import h5py
+from numpy import array, zeros, empty, arange, diff, concatenate, interp, linspace
+from numpy import convolve, apply_along_axis
+import scipy.signal
+
+import seaborn
+from matplotlib import pyplot
+
+
+DEFAULT_TXINFOFN = "./staticdata/human/transcript_data.hdf5"
+DEFAULT_MINREADS = 100
+
+import os
+from itertools import izip
+from collections import defaultdict
+
+import matplotlib
+matplotlib.use('Agg')
+
+import h5py
+from numpy import array, zeros, empty, arange, diff, concatenate, interp, linspace
+from numpy import convolve, apply_along_axis
+import scipy.signal
+
+import seaborn
+from matplotlib import pyplot
+def select_representative_isoforms(infofn):
+    """
+    Longest CDS per gene, if tied: least # of exons, if tied: longest transcript
+    """
+
+    info = h5py.File(infofn, 'r')
+
+    tids = info["tid"][:]
+    gids = info["gid"][:]
+    cdspos = info["cdspos"][:]
+    coordlut = info["coordlut"][:]
+    tidlengths = diff(concatenate((info["seqlut"][:], array([info["seq"].shape[0]], dtype=info["seqlut"].dtype))))
+    cdslengths = diff(cdspos, axis=1).squeeze()
+
+    gi = defaultdict(lambda: list())
+    for tid, gid, (nexons, exonsoffset), tidlength, cdslength in izip(tids, gids, coordlut, tidlengths, cdslengths):
+        gi[gid].append((tid, cdslength, nexons, tidlength))
+
+    chosentids = dict()
+    for gid, vals in gi.iteritems():
+        chosen = sorted(vals, key=lambda t: (t[1], -t[2], t[3]))[-1]
+        if chosen[1] == 0:
+            # cdslength == 0
+            continue
+        chosentids[gid] = chosen[0]
+
+    return chosentids
+
+
+def get_transcript_rpf_density(A, infofn, chosentids):
+
+    info = h5py.File(infofn, 'r')
+
+    seqlut = info["seqlut"][:]
+    tids = info["tid"][:]
+    cdspos = info["cdspos"][:]
+
+    tidlengths = concatenate((diff(seqlut), array([int(info["seq"].shape[0] - seqlut[-1])], dtype=seqlut.dtype)))
+    assert tidlengths.sum() == info["seq"].shape[0]
+    cdslengths = diff(cdspos).squeeze()
+    assert (cdslengths <= tidlengths).all()
+
+    datatid2idx = {x: i for (i, x) in enumerate(tids)}
+    tid2itid = {x: i for (i, x) in enumerate(sorted(chosentids.itervalues()))}
+
+    counts = zeros((len(chosentids),4), dtype="uint32")
+    for gid in chosentids:
+        tid = chosentids[gid]
+        tididx = datatid2idx[tid]
+        offset = seqlut[tididx]
+        l = tidlengths[tididx]
+        cdsstart, cdsend = cdspos[tididx]
+        assert cdsstart < l
+        assert cdsstart < cdsend
+
+        a = A[offset:(offset + l)]
+        assert a.size == l
+        t = a.sum()
+
+        itid = tid2itid[tid]
+
+        counts[itid] = t
+
+        if t == 0:
+            continue
+	
+	if cdsstart > 50:
+		counts[itid] = [a[:cdsstart-30].sum(), 
+				a[cdsstart-30:cdsstart+30].sum(),
+				a[cdsstart+30:cdsend].sum(),
+				a[cdsend:].sum()]
+
+    return counts
+
+
+def get_averaged_transcript_rpf_densities_mutliple_samples(sampleinfo, infofn, minreads,outf):
+    chosentids = select_representative_isoforms(infofn)
+    for isample, sample in enumerate(sampleinfo):
+        h5data = h5py.File(sample[1], 'r')
+        A = h5data["counts"][sample[0]][:]
+        counts = get_transcript_rpf_density(A, infofn, chosentids)
+	outfo = open(outf + '.' + sample[0] + '.txt', 'w')
+	for i, tid in enumerate(chosentids):
+		outfo.write(tid + '\t' + '\t'.join(map(str,counts[i])) + '\n')
+
+
+
+def main():
+    import argparse
+    ap = argparse.ArgumentParser(description="")
+    ap.add_argument('-m', '--minreads', required=False, default=DEFAULT_MINREADS, type=int)
+    ap.add_argument('-o', '--outfile', required=True)
+    ap.add_argument('-t', '--txinfofile', required=False, default=DEFAULT_TXINFOFN)
+    #ap.add_argument(dest="sampleinfofile", metavar="SAMPLEINFOFILE", nargs=1)
+    ap.add_argument(dest="sampleinfos", metavar="SAMPLEINFO", nargs="*")
+
+    args = ap.parse_args()
+
+    if not args.minreads > 0:
+        ap.error("Invalid value for minreads: %d" % args.minreads)
+
+    if not os.access(args.txinfofile, os.R_OK):
+        ap.error("Unable to open file: %s" % args.txinfofile)
+
+    #sampleinfo = []
+    #for line in open(args.sampleinfofile[0]):
+    #    fields = line.rstrip().split("\t")
+    #    if len(fields) != 4:
+    #        continue
+
+    #    sampleinfo.append(fields)
+
+    sampleinfo = []
+    for s in args.sampleinfos:
+        fields = s.split(",")
+        if len(fields) != 4:
+            ap.error("Invalid sampleinfo argument: %s" % s)
+        sampleinfo.append(fields)
+
+
+    get_averaged_transcript_rpf_densities_mutliple_samples(sampleinfo, args.txinfofile,args.minreads,args.outfile)
+
+    return
+
+
+if __name__ == "__main__":
+    from signal import signal, SIGPIPE, SIG_DFL
+    signal(SIGPIPE, SIG_DFL)
+
+    try:
+        main()
+    except IOError as e:
+        if e.errno != 32:
+            raise
+    except KeyboardInterrupt as e:
+        pass
