@@ -1,14 +1,12 @@
 #!/bin/bash
 
-# source ./diricore_virtualenv/bin/activate
-
 set -e;
 set -u;
 
 
 BOWTIE_BIN="./programs/bowtie2-2.0.6/bowtie2";
-INDIR="./data/input/fastq/";
-OUTDIR="./data/output/clean/";
+INDIR="./data/input/fastq";
+OUTDIR="./data/output/clean";
 
 species=$1
 adapter=$2;
@@ -30,7 +28,8 @@ ls -1 ${INDIR}/*.fastq.gz | while read fn; do
     rrna_err="${OUTDIR}/${b}.rrna.err";
     trna_err="${OUTDIR}/${b}.trna.err";
 
-    tmpfile=$(tempfile -d "/tmp/" -s ".${b}.rrna_cleaned.tmp.fastq.gz");
+    tmpfile=$(mktemp "/tmp/"${b}".rrna_cleaned.tmp.fastq.gz");
+    trap "{ rm -f /tmp/${b}.rrna_cleaned.tmp.fastq.gz;" } EXIT;
 
     echo "Starting preprocessing of file: ${bn}";
     cat "${fn}" \
