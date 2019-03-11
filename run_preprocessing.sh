@@ -29,9 +29,9 @@ ls -1 ${INDIR}/*.fastq.gz | while read fn; do
     trna_err="${OUTDIR}/${b}.trna.err";
 
     tmpfile="/tmp/${b}.rrna_cleaned.tmp.fastq.gz";
+    rm -f $tmpfile;
     $(cp ${INDIR}/${b}.fastq.gz $tmpfile);
-    # tmpfile=$(mktemp "${OUTDIR}/tmp/"${b}".rrna_cleaned.tmp.fastq.gz");
-    trap "{ rm -f ${tmpfile};" } EXIT;
+    trap "{ rm -f ${tmpfile}; }" EXIT;
 
     echo "Starting preprocessing of file: ${bn}";
     cat "${fn}" \
@@ -46,7 +46,7 @@ ls -1 ${INDIR}/*.fastq.gz | while read fn; do
     | ${BOWTIE_BIN} --seed 42 --local --un-gz "${of}" "${TRNA_REF}" - \
     > /dev/null 2> "${trna_err}";
 
-    rm ${tmpfile};
+    rm -f ${tmpfile};
 done
 
 echo "Done with preprocessing";
