@@ -1567,13 +1567,13 @@ class FastxReader:
     #no records processed yet, skip custom header lines if any
     hlines=10 # allow maximum 10 header lines
     self.lastline=" "
-    while hlines>0 and self.lastline[0] not in "@>" :
+    while hlines>0 and self.lastline != "" and self.lastline[0] != "@" and self.lastline[0] != ">" :
        self.lastline=self.ifile.readline()
        hlines-=1
-    if self.lastline[0] == '@':
+    if self.lastline and self.lastline[0] == '@':
       self.format='fastq'
       self.nextRecord=self.nextFastq
-    elif self.lastline[0] == '>':
+    elif self.lastline and self.lastline[0] == '>':
       self.format='fasta'
       self.nextRecord=self.nextFasta
     else:
@@ -1772,7 +1772,7 @@ class ZReader:
               die("Error: could not open pipe "+' '.join(pipecmd)+' < '+ self.fname)
            self.file=self.popen.stdout
         else:
-           self.file=open(filename)
+           self.file=open(filename, 'w+')
     def close(self):
        if self.fsrc: self.fsrc.close()
        self.file.close()
