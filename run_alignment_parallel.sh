@@ -1,17 +1,15 @@
 #!/bin/bash
 
 
-. ./diricore_virtualenv/bin/activate
-
 set -e;
 set -u;
 
 
-export BOWTIE_PATH="./programs/bowtie2-2.0.6/";
+export BOWTIE_PATH="./programs/bowtie2-2.0.6";
 export TOPHAT_BIN="./programs/tophat-2.0.7/tophat2";
 
-export INDIR="./data/output/clean/";
-export OUTDIR="./data/output/tophat_out/";
+export INDIR="./data/output/clean";
+export OUTDIR="./data/output/tophat_out";
 
 echo "settings:";
 export species=${1:-human}; echo -e "\tspecies: $species";
