@@ -28,8 +28,10 @@ ls -1 ${INDIR}/*.fastq.gz | while read fn; do
     rrna_err="${OUTDIR}/${b}.rrna.err";
     trna_err="${OUTDIR}/${b}.trna.err";
 
-    tmpfile=$(mktemp "/tmp/"${b}".rrna_cleaned.tmp.fastq.gz");
-    trap "{ rm -f /tmp/${b}.rrna_cleaned.tmp.fastq.gz;" } EXIT;
+    tmpfile="/tmp/${b}.rrna_cleaned.tmp.fastq.gz";
+    $(cp ${INDIR}/${b}.fastq.gz $tmpfile);
+    # tmpfile=$(mktemp "${OUTDIR}/tmp/"${b}".rrna_cleaned.tmp.fastq.gz");
+    trap "{ rm -f ${tmpfile};" } EXIT;
 
     echo "Starting preprocessing of file: ${bn}";
     cat "${fn}" \
