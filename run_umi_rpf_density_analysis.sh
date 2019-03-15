@@ -1,15 +1,12 @@
 #!/bin/bash
 
-
-source ./diricore_virtualenv/bin/activate
-
 set -e;
 set -u;
 
 
-OUTDIR="./data/output/rpf_5p_density/";
-INDIR="./data/output/tophat_out/";
-PLOTDIR="./data/output/figures/";
+OUTDIR="./data/output/rpf_5p_density";
+INDIR="./data/output/tophat_out";
+PLOTDIR="./data/output/figures";
 SAMPLENAME_FILE="./data/input/metadata/rpf_density_samplenames.tsv";
 CONTRAST_FILE="./data/input/metadata/rpf_density_contrasts.tsv";
 
@@ -26,7 +23,7 @@ MAPSSTART_FILE="./staticdata/${species}/codon_regions.START_Other_ATG.width_61.h
 # { setup
 of="${OUTDIR}/${projectname}.txcoord_counts.hdf5";
 
-mkdir ${OUTDIR} || true;
+mkdir -p ${OUTDIR} || true;
 mkdir -p "${PLOTDIR}/rpf_5p_density_plots/" || true;
 
 # map RPFs to transcriptome coordinates

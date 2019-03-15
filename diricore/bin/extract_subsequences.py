@@ -159,7 +159,7 @@ def write_counts(outfile, samplename, counts):
         chunkdim0 = min(counts.shape[0], chunkdim0)
         chunks = (chunkdim0, counts.shape[1], counts.shape[2])
 
-        h5file.create_dataset("/%s" % samplename, data=counts, chunks=chunks, compression=4)
+        h5file.create_dataset("/{}".format(samplename), data=counts, chunks=chunks, compression=4)
 
         h5file.close()
         del h5file

@@ -1,7 +1,5 @@
 #! /bin/bash
 
-#. ./diricore_virtualenv/bin/activate
-
 
 set -e;
 set -u;
@@ -57,4 +55,5 @@ ls -1 ${OUTDIR}/*/accepted_hits.bam | while read fn; do
 done
 
 echo "Done filtering";
+exit 0;
 ###

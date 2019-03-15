@@ -1,15 +1,15 @@
 #!/bin/bash
 
-. ./diricore_virtualenv/bin/activate
+# . ./diricore_virtualenv/bin/activate
 
 
 set -e;
 set -u;
 
 
-OUTDIR="./data/output/subsequence_data/";
-INDIR="./data/output/tophat_out/";
-PLOTDIR="./data/output/figures/";
+OUTDIR="./data/output/subsequence_data";
+INDIR="./data/output/tophat_out";
+PLOTDIR="./data/output/figures";
 SAMPLENAME_FILE="./data/input/metadata/subsequence_samplenames.tsv";
 CONTRAST_FILE="./data/input/metadata/subsequence_contrasts.tsv";
 
@@ -23,7 +23,7 @@ of="${OUTDIR}/${projectname}.subsequence_data.frame0.hdf5";
 
 ###
 mkdir ${OUTDIR} || true;
-mkdir -p "${PLOTDIR}/subsequence_shift_plots/" || true;
+mkdir -p "${PLOTDIR}/subsequence_shift_plots" || true;
 
 ls -1 ${INDIR}/*/accepted_hits.hqmapped.bam | sort -V | while read bamfn; do
     b=$(basename $(dirname "$bamfn"));

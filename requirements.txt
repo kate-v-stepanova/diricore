@@ -11,3 +11,4 @@ HTSeq==0.7.2
 statsmodels==0.6.1
 seaborn==0.7.0
 cutadapt==1.18
+umi_tools==0.5.5

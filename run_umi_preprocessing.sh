@@ -6,11 +6,10 @@ set -u;
 
 
 export BOWTIE_BIN="./programs/bowtie2-2.0.6/bowtie2";
-export INDIR="./data/input/fastq/";
-export OUTDIR="./data/output/clean/";
+export INDIR="./data/input/fastq";
+export OUTDIR="./data/output/clean";
 echo "Settings:";
 export species=$1; echo -e "\tspecies:$species";
-export cores=${2:-1}; echo -e "\tparallel_processes: $cores";
 
 export RRNA_REF="./staticdata/${species}/rRNAs";
 export TRNA_REF="./staticdata/${species}/tRNAs";
@@ -28,7 +27,10 @@ run_prep() {
     rrna_err="${OUTDIR}/${b}.rrna.err";
     trna_err="${OUTDIR}/${b}.trna.err";
 
-    tmpfile=$(tempfile -d "/tmp/" -s ".${b}.rrna_cleaned.tmp.fastq.gz");
+    tmpfile="/tmp/${b}.rrna_cleaned.tmp.fastq.gz";
+    rm -f $tmpfile;
+    $(cp ${INDIR}/${b}.fastq.gz $tmpfile);
+    trap "{ rm -f ${tmpfile}; }" EXIT;
 
     echo "Starting preprocessing of file: ${bn}";
     cat "${fn}" \
@@ -44,8 +46,11 @@ run_prep() {
     rm ${tmpfile};
 }
 export -f run_prep
-echo "Preprocessing files in parallel..."
-ls ${INDIR}/*.fastq.gz | parallel run_prep
+for f in `ls ${INDIR}/*.fastq.gz`; do
+  echo "Preprocessing ${f}";
+  run_prep ${f};
+  echo "Done ${f}";
+done;
 
 echo "Done with preprocessing";
 ###

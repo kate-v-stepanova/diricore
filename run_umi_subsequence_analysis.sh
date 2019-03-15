@@ -1,17 +1,16 @@
 #!/bin/bash
 
-. ./diricore_virtualenv/bin/activate
-
-
 set -e;
 set -u;
 
 
-OUTDIR="./data/output/subsequence_data/";
-INDIR="./data/output/tophat_out/";
-PLOTDIR="./data/output/figures/";
+OUTDIR="./data/output/subsequence_data";
+INDIR="./data/output/tophat_out";
+PLOTDIR="./data/output/figures";
 SAMPLENAME_FILE="./data/input/metadata/subsequence_samplenames.tsv";
 CONTRAST_FILE="./data/input/metadata/subsequence_contrasts.tsv";
+RPF_CONTRASTS="./data/input/metadata/rpf_density_contrasts.tsv";
+RPF_SAMPLENAME="./data/input/metadata/rpf_density_samplenames.tsv"
 
 species=$1;
 projectname=$2;
@@ -20,9 +19,17 @@ minreads=$3;
 INDEXDATAFN="./staticdata/${species}/subseq_index_data.pkl.gz";
 of="${OUTDIR}/${projectname}.subsequence_data.frame0.hdf5";
 
+if [ ! -f ${CONTRAST_FILE} ]; then
+    cut -f1,2 ${RPF_CONTRASTS} > ${CONTRAST_FILE}
+fi
+
+if [ ! -f ${SAMPLENAME_FILE} ]; then
+    cp ${RPF_SAMPLENAME} ${SAMPLENAME_FILE}
+fi
 
 ###
-mkdir ${OUTDIR} || true;
+rm -rf data/output/subsequence_data/*
+mkdir -p ${OUTDIR} || true;
 mkdir -p "${PLOTDIR}/subsequence_shift_plots/" || true;
 
 ls -1 ${INDIR}/*/accepted_hits.hqmapped_dedup.bam | sort -V | while read bamfn; do

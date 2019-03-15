@@ -67,7 +67,8 @@ def main():
     
     ylims_str = args.y_limits
     if ylims_str is None:
-        ylimits = None
+        # ylimits = None
+	ylimits = map(float, [0,100])
     else:
         ylimits = map(float, ylims_str.split(","))
 
