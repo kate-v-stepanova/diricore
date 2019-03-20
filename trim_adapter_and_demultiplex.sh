@@ -2,15 +2,22 @@
 
 # exit on error:
 set -e
+# exit on Ctrl-C
+trap 'exit' INT
+
+flowcell_path=$1
+
+# merge fastq files into one
+echo "Merging $flowcell_path/*/*/*.fastq.gz into one file"
+cat $flowcell_path/*/*/*.fastq.gz > ./data/input/merged/merged.fastq.gz
+echo "Merging done"
 
 # merge fastq files into one
 cat ./data/input/fastq/*.fastq.gz > ./data/input/merged/merged.fastq.gz
 rm -f ./data/input/fastq/*.fastq.gz
 
 # remove adapter
-gzip -dc data/input/merged/merged.fastq.gz | cutadapt -u 3 -O 7 -m 30 -a AGATCGGAAGAGCACACGTCTGAA --discard-untrimmed - 2> data/output/cutadapt.log | ../fastx_toolkit/fastx_barcode_splitter.pl --bcfile data/input/metadata/bc_file.txt --prefix data/output/demultiplexed/dem_ --suffix .fastq --eol 2> data/output/bc_split.log
-
-# parallel -j 3 umi_tools extract --extract-method=string --3prime --bc-pattern=NNNNNN --stdin={} --log=Logs/{/.}_umiextract_stats.txt --stdout={.}_umied.fastq.gz --log2stderr ::: demultiplexed/*.fastq
+gzip -dc data/input/merged/*merged.fastq.gz | cutadapt -u 3 -O 7 -m 30 -a AGATCGGAAGAGCACACGTCTGAA --discard-untrimmed - 2> data/output/cutadapt.log | ../fastx_toolkit/fastx_barcode_splitter.pl --bcfile data/input/metadata/bc_file.txt --prefix data/output/demultiplexed/dem_ --suffix .fastq --eol 2> data/output/bc_split.log
 
 # remove umi (any random sequence of 5-nt length)
 mkdir -p ./data/output/umi_extract
