@@ -3,7 +3,11 @@
 The diricore version used for the analysis:
 
 ```
-diricore_dev
+commit 6b1d20fed0c93b053ba6fc3c221a15a2cb98e905 (HEAD -> master, origin/master, origin/HEAD)
+Author: b250-admin <b250-admin@dkfz-vpn94.inet.dkfz-heidelberg.de>
+Date:   Tue Mar 26 11:31:26 2019 +0100
+
+    Second working version. Tested on Hiseq dataset
 ```
 
 
