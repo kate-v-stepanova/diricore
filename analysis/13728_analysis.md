@@ -199,5 +199,5 @@ Ha_Roca C       #99ffdd
 Running script:
 
 ```
-./plot_rpf_transcript_distribution.sh 13728 25_allHQ 25 20190123_allHQ
+./plot_rpf_transcript_distribution.sh 13728 25
 ```
