@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<!-- saved from url=(0099)file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>The_diricore_package_APU_version</title>
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///C:/Users/AlejandroPU/.atom/packages/markdown-preview-enhanced/node_modules/@shd101wyy/mume/dependencies/katex/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      <style> 
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+ 
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview   ">
+      <h1>The diricore pipeline APU version</h1>
+<hr>
+<ul>
+<li><a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#summary">Summary</a></li>
+<li><a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#installation">Installation</a>
+<ul>
+<li><a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#diricore-file-system">Diricore file system</a></li>
+<li><a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#extract-the-genomic-data">Extract the genomic data</a>
+<ul>
+<li><a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#using-virtual-environment">Using virtual environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#running-example-data">Running example data</a><br>
+* <a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#input-data">Input data</a><br>
+* <a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#pre_processing-the-files">Pre_processing the files</a><br>
+* <a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#run-alignments">Run alignments</a><br>
+* <a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#subsequence-analysis">Subsequence analysis</a><br>
+* <a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#rpf-density-analysis">RPF density analysis</a><br>
+* <a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#make-ucsc-tracks">Make UCSC tracks</a><br>
+* <a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#plot-rpf-transcript-distribution">Plot RPF transcript distribution</a></li>
+<li><a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#umi-pipeline">UMI PIPELINE</a></li>
+<li><a href="file:///Users/b250-admin/Downloads/diricore_apu/documentation/The_diricore_package_APU_version.html#appendix-creating-a-virtual-environment">Appendix: Creating a virtual environment</a></li>
+</ul>
+<hr>
+<h1 class="mume-header" id="summary">Summary</h1>
+
+<p>This version of diricore package was made to bypass the impossibility of using <em>docker</em> in some systems (like the HPC at the NKI). The scripts were modified to point at the correct paths and most of the dependencies were included in the package to make it the closest possible to the docker image.</p>
+<p>All these modifications were made based in the documentation from the original diricore package. The folder programs include the same versions than the docker image for the following programs:</p>
+<ul>
+<li>samtools (0.1.18)</li>
+<li>bowtie2 (2.0.6)</li>
+<li>tophat2 (2.0.7)</li>
+<li>cutadapt (1.1)</li>
+</ul>
+<p>The binaries of these packages are x64 versions for a linux system. If you plan to run diricore in a different enviroment, you will have to install the right ones and modify the scripts to point at the new paths.<br>
+It is assumed that the system will have python (2.7). If not, you will have to install it before doing any installation.</p>
+<p>The diricore pipeline needs also some python2 packages: numpy, scipy, matplotlib, seaborn, pandas, h5py, pysam, HTSeq, statsmodels. The docker image from the original diricore package has already the right packages installed. To solve this issue without docker, I used a python virtual environment using <code>virtualenv</code>. Since I don't have means to access the docker image to check the exact version of the packages, I installed the last versions at the date when diricore package was created (I estimated it to be Jan 2016). See instructions bellow on how to use the virtual environment.</p>
+<p><strong>Parallelization</strong><br>
+In addition to adapt the scripts for a non-docker environment, I created versions of some scripts that allow parallel running. These versions take advantage of the multiple cores of the HPC cluster of computers at the NKI. For a laptop or a modest system, use the single-core original versions.</p>
+<p><strong>Documentation</strong><br>
+Original documentation from Koos is present in the documentation folder in three different formats:</p>
+<ul>
+<li>The_diricore_pipeline.html</li>
+<li>The_diricore_pipeline.md</li>
+<li>The_diricore_pipeline.pdf</li>
+</ul>
+<h1 class="mume-header" id="installation">Installation</h1>
+
+<h2 class="mume-header" id="diricore-file-system">Diricore file system</h2>
+
+<p>After decompressing the diricore.tar file, you will get a file structure similar like this:</p>
+<pre data-role="codeBlock" data-info="html" class="language-html">./
+└── documentation
+└── diricore_pipeline: contains the bash wrapper scripts
+    ├── data: input and output will be stored here
+    └── programs: contains binaries of samtools, bowtie, etc...
+    └── staticdata: required data for analysis of human, mouse and yeast
+    └── diricore: contains the scripts written by Koos to run diricore
+    └── diricore_virtualenv: virtual environment with python packages
+</pre><h2 class="mume-header" id="extract-the-genomic-data">Extract the genomic data</h2>
+
+<p>The package from Koos contained already all the necessary files for running diricore with human, mouse or yeast genomes. These data is in folder diricore_pipeline/staticdata. Before proceeding, extract the data for the species you want to run. For example, for human:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">cd</span> diricore_pipeline/staticdata/
+<span class="token function">tar</span> -xvf diricore.genomic_data.human.KR20160123.tar
+<span class="token function">rm</span> diricore.genomic_data.human.KR20160123.tar
+</pre><p>This will create a folder named <em>human</em> that contains all genomic information</p>
+<h3 class="mume-header" id="using-virtual-environment">Using virtual environment</h3>
+
+<p>You don't need to activate the environment before running the scripts, the bash wrappers will activate.<br>
+To test that the environment was properly installed follow this instructions:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">source</span> diricore_virtualenv/bin/activate
+</pre><p>After doing that, you will notice that your prompt includes now <code>(diricore_virtualenv)</code> at the beginning of the line. Example:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token punctuation">(</span>diricore_virtualenv<span class="token punctuation">)</span>a.pineiro.ugalde@paranoid:~/diricore_APU/diricore_pipeline$
+</pre><p>That means that the virtual environment was activated correctly. Now, the python installation present in the diricore_virtualenv folder will be used.<br>
+If you want to exit from the virtual environment, run:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">deactivate
+</pre><p>NOTE:</p>
+<h1 class="mume-header" id="running-example-data">Running example data</h1>
+
+<h3 class="mume-header" id="input-data">Input data</h3>
+
+<p>By default, the diricore package has already a sample dataset for testing. Other input data that you want to analyze must have the same structure than the default example data:</p>
+<pre data-role="codeBlock" data-info="html" class="language-html">./data
+└── input
+    ├── fastq
+    │   ├── GSM1446832_subset.fastq.gz
+    │   └── GSM1446833_subset.fastq.gz
+    └── metadata
+        ├── rpf_density_contrasts.tsv
+        ├── rpf_density_samplenames.tsv
+        ├── subsequence_contrasts.tsv
+        └── subsequence_samplenames.tsv
+        └── ucsc_track_samplenames.tsv
+        └── rpf_transcript_distribution_sampleinfo.tsv
+
+3 directories, 8 files
+</pre><p>The <strong>fastq</strong> folder must contain the compressed fastq files that you want to analyze. If your fastq files are <em>fastq</em> instead of <em>fastq.gz</em>, compress them with gzip before proceeding.<br>
+The <strong>metadata</strong> folder contains important sample information. Check the files to adapt them for other than the example dataset. <strong>NOTE</strong>: use always tab delimited format and not spaces or other separators, since it will produce errors.</p>
+<h3 class="mume-header" id="pre_processing-the-files">Pre_processing the files</h3>
+
+<p>You can use Koos original script or my version with parallelization.</p>
+<p><strong>Koos script</strong></p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">cd</span> diricore_pipeline
+./run_preprocessing.sh human TGGAATTCTCGGGTGCCAAGGAACTCCAGTCACA
+</pre><p>Where "human" is the species and "TGGAATTCTCGGGTGCCAAGGAACTCCAGTCACA" is the 3' adapter present in the reads.</p>
+<p><strong>Parallel option (faster but more demanding)</strong></p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">./run_preprocessing_parallel.sh human TGGAATTCTCGGGTGCCAAGGAACTCCAGTCACA 2
+</pre><p>Where "human" is the species, "TGGAATTCTCGGGTGCCAAGGAACTCCAGTCACA" is the 3' adapter present in the reads and "2" is the number of parallel processes (I suggest to use the number of fastq files, unless is too large). If not provided, default will be no parallelization (1 process)</p>
+<h3 class="mume-header" id="run-alignments">Run alignments</h3>
+
+<p><strong>Koos script</strong></p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">cd</span> diricore_pipeline
+./run_alignment.sh human
+</pre><p><strong>Parallel option (faster but more demanding; not for a personal computer)</strong></p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">./run_alignment_parallel.sh human 2 5
+</pre><p>Where "human" is the species, "2" is the number of parallel files to be processed simultaneusly and "5" is the number of threads that tophat will use per parallel process.<br>
+<strong>IMP</strong>: be careful with these values or you can collapse the servers. If you don't provide these values, default will be with no parallelization (1 process and 1 thread)</p>
+<h3 class="mume-header" id="subsequence-analysis">Subsequence analysis</h3>
+
+<p><code>run_subsequence_analysis.sh</code> makes uses of the metadata files located at <code>$DIRICORE_EXAMPLE_DATA_DIR/input/metadata/subsequence_*.tsv</code><br>
+Those files specify the contrasts (ie. which sample is compared to which)</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">source</span> ./diricore_virtualenv/bin/activate
+./run_rpf_density_analysis.sh human test_project 25
+</pre><p>Where "human" is the species, "test_project" is the project name you want to give to the files and "25" is the minimum number of reads for the analysis</p>
+<p><code>run_subsequence_analysis_plot_only.sh</code> skip the first step in <code>run_subsequence_analysis.sh</code>. The first time that <code>run_subsequence_analysis.sh</code> is executed, HDF5 files with information about RPF positions are created and then it is plotted. If something wants to be change in the plot, there is no need to map again positions of RPF, so it is much faster to run <code>run_subsequence_analysis_plot_only.sh</code></p>
+<h3 class="mume-header" id="rpf-density-analysis">RPF density analysis</h3>
+
+<p>As with <code>run_subsequence_analysis.sh</code>, <code>run_rpf_density_analysis.sh</code> also makes use of metadata files to specify contrasts.<br>
+Those files are at <code>$DIRICORE_EXAMPLE_DATA_DIR/input/metadata/rpf_density*.tsv</code></p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">source</span> ./diricore_virtualenv/bin/activate
+./run_subsequence_analysis.sh human test_project 100
+</pre><p>Where "human" is the species, "test_project" is the project name you want to give to the files and "100" is the minimum number of reads for the analysis</p>
+<p><code>run_rpf_density_analysis_plot_only.sh</code> skip the first step in <code>run_rpf_density_analysis.sh</code>. The first time that <code>run_rpf_density_analysis.sh</code> is executed, HDF5 files with information about RPF positions are created and then it is plotted. If something wants to be change in the plot, there is no need to map again positions of RPF, so it is much faster to run <code>run_rpf_density_analysis_plot_only.sh</code></p>
+<h3 class="mume-header" id="make-ucsc-tracks">Make UCSC tracks</h3>
+
+<p><code>generate_ucsc_tracks.sh</code> makes use of the metadata files to specify sample labels and colors. This file is present in <code>data/input/metadata/ucsc_track_samplenames.tsv</code></p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">source</span> ./diricore_virtualenv/bin/activate
+./generate_ucsc_tracks.sh test_project 2
+</pre><p>Where "test_project" is the project name you want to give to the files and "2" is the number of parallel process (again, be careful with this number). If not provided, default will be no parallelization (1 process).</p>
+<h3 class="mume-header" id="plot-rpf-transcript-distribution">Plot RPF transcript distribution</h3>
+
+<p><strong>Option 1: use the bash wrapper script</strong></p>
+<p>This is just a wrapper to facilitate executing the script. It uses a metafile like the previous scripts. Check the metafile example present in the input folder to see how to adapt it to your samples. It basically needs the sample name, a sample label and a color (in hex).</p>
+<p>The simplest way to run it, with default values is:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">source</span> ./diricore_virtualenv/bin/activate
+./plot_rpf_transcript_distribution.sh test_project
+</pre><p>"test_project" is the project name and must be exactly as you used in the run_rpf_density_analysis script. By default, this bash script uses 100 as minimal reads.</p>
+<p>More options can be provided to the script to make it more versatile:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">source</span> ./diricore_virtualenv/bin/activate
+./plot_rpf_transcript_distribution.sh test_project 100 /path/to/metafile.tsv path/to/txcoord_counts.hdf5
+</pre><p>This way, you can have more than one metafile, to generate different plots. You can also manually point at the txcoord_counts file.</p>
+<p><strong>Option 2: manually run the python command</strong></p>
+<p>Optionally, you can run original python script from Koos, which is located in "./diricore/bin/plot_rpf_transcript_distribution.py"</p>
+<p>Usage is as follows:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">source</span> ./diricore_virtualenv/bin/activate
+
+minreads<span class="token operator">=</span>100<span class="token punctuation">;</span>
+python plot_rpf_transcript_distribution.py \
+     -o
+KR20151104.2864_Noco_Torin.rpf_transcript_coverage.m<span class="token variable">${minreads}</span>.pdf \
+     -m <span class="token variable">${minreads}</span> \
+<span class="token string">'2864_1,../KR20141110/data/transcript_coordinate_rpf_counts/KR20141215.286
+4_U2OS_Myc_Torin_Noco.txcoord_counts.hdf5,Control,#425D80'</span>
+\
+<span class="token string">'2864_5,../KR20141110/data/transcript_coordinate_rpf_counts/KR20141215.286
+4_U2OS_Myc_Torin_Noco.txcoord_counts.hdf5,Torin,#806842'</span>
+\
+<span class="token string">'2864_3,../KR20141110/data/transcript_coordinate_rpf_counts/KR20141215.286
+4_U2OS_Myc_Torin_Noco.txcoord_counts.hdf5,Noco,#428042'</span>
+\
+</pre><p>The '-o' argument is required, the minimum-number of reads argument defaults to 100 if not specified. The samples are specified as list of comma-separated tuples of:<br>
+'&lt;sample_id&gt;,<hdf5 file="" with="" transcriptome-mapped="" rpfs="">,<human readable="" sample="" name="">,<color for="" the="" line="" in="" plot="">'<br>
+The data of &lt;sample_id&gt; must obviously be present in the HDF5 file (in fact the map_rpfs_to_transcriptome_positions.py script is what generates the transcriptome-mapped HDF5 file given genome-mapped BAM files as input).</color></human></hdf5></p>
+<hr>
+<h1 class="mume-header" id="umi-pipeline">UMI PIPELINE</h1>
+
+<p>The diricore package was not intended to use with UMIs. To integrate the UMIs in the package, I created versions of some scripts.</p>
+<p>run_umi_preprocessing.sh: the difference with normal script is that this one lacks the adaptor trimming steps and does only the rRNA and rRNA removal<br>
+run_umi_rpf_density_analysis.sh: basically the same script but changes the names of the input files to adapted to umis.<br>
+run_umi_subsequence_analysis.sh: basically the same script but changes the names of the input files to adapted to umis.</p>
+<h1 class="mume-header" id="appendix-creating-a-virtual-environment">Appendix: Creating a virtual environment</h1>
+
+<p>This virtual environment included in the package was built in an ubuntu 64bit machine. If the virtual environment does not work or you need something different, you can follow this instructions to create you own virtual environment.</p>
+<p><strong>Requirements</strong></p>
+<p>First, check if you have <em>pip</em> installed in your system with the following command:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">pip --version
+<span class="token comment"># pip 9.0.1 from /home/NFS/users/a.pineiro.ugalde/.local/lib/python2.7/site-packages (python 2.7)</span>
+</pre><p>If you get an error, it means that you don't have <em>pip</em> installed. Follow this <a href="https://pip.pypa.io/en/stable/installing/">link</a> to get instructions on how to install it. After downloading the last version from the link, run <code>python get-pip.py --user</code> from the folder where you saved <a href="http://get-pip.py/">get-pip.py</a>.</p>
+<p>After instaling <em>pip</em>, check if you have <code>virtualenv</code> installed:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">virtualenv --version
+<span class="token comment"># 1.11.4</span>
+</pre><p>If you don't have it, just run <code>pip install --user virtualenv</code> to install it</p>
+<p><strong>Create the virtual environment</strong><br>
+<strong>IMPORTANT</strong>: if you don't want to change every script, create the diricore_virtualenv in the directory where the scripts are located. Otherwise, you will have to change the path of the location of the virtual environment</p>
+<p>Run:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">virtualenv --python<span class="token operator">=</span>python2.7 diricore_virtualenv
+</pre><p>That will create a folder called <em>diricore_virtualenv</em> with a basic python2.7 virtual environment.<br>
+To install the required packages for diricore, activate the enviroment by running:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">source</span> diricore_virtualenv/bin/activate
+</pre><p>You will notice that it is active because you will see <code>(diricore_virtualenv)</code> at the beginning of the prompt line.<br>
+Now, you can install all the packages using pip. I run the following commands in this specific order:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">pip <span class="token function">install</span> --upgrade pip
+pip <span class="token function">install</span> numpy<span class="token operator">==</span>1.10.4
+pip <span class="token function">install</span> scipy<span class="token operator">==</span>0.17.0
+pip <span class="token function">install</span> matplotlib<span class="token operator">==</span>1.5.2
+pip <span class="token function">install</span> pandas<span class="token operator">==</span>0.18.0
+pip <span class="token function">install</span> nose <span class="token comment">#required for pkgconfig</span>
+pip <span class="token function">install</span> pkgconfig<span class="token operator">==</span>1.2.0 <span class="token comment"># required for h5py</span>
+pip <span class="token function">install</span> cython <span class="token comment"># required for h5py</span>
+pip <span class="token function">install</span> h5py<span class="token operator">==</span>2.6.0
+pip <span class="token function">install</span> pysam<span class="token operator">==</span>0.10.0
+pip <span class="token function">install</span> HTSeq<span class="token operator">==</span>0.7.2
+pip <span class="token function">install</span> statsmodels<span class="token operator">==</span>0.6.1
+pip <span class="token function">install</span> seaborn<span class="token operator">==</span>0.7.0
+pip <span class="token function">install</span> cutadapt<span class="token operator">=</span>1.9
+</pre><p>Notice that the first thing is to upgrade <code>pip</code>, since the virtual environment includes a very old version of it that will cause error in the installation of some packages.</p>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    </body></html>
