@@ -4,9 +4,20 @@ require(ggplot2)
 require(data.table)
 require(RColorBrewer)
 
-INDIR="./data/output/alignment_stats"
-OUTDIR="./data/output/figures"
-BC_SPLIT_FILE="./data/output/bc_split_stats.txt"
+
+args = commandArgs(trailingOnly=TRUE)
+if (length(args)==0) {
+   stop(paste("Usage example:", args[0], "14548"))
+} else if (length(args)==1) {
+    dataset_id=args[1]
+}
+
+BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
+PROJECT_DIR=paste(BASE_DIR, dataset_id, sep="/")
+
+INDIR=paste(PROJECT_DIR, "analysis/output/alignment_stats", sep="/")
+OUTDIR=paste(PROJECT_DIR, "analysis/output/figures", sep="/")
+BC_SPLIT_FILE=paste(PROJECT_DIR, "analysis/output/bc_split_stats.txt", sep="/")
 
 # Manually input data from Logs/cutadapt_trimming_stats.txt
 print("Manually input data from Logs/cutadapt_trimming_stats.txt")
@@ -30,7 +41,7 @@ myplot <- ggplot(mydt, aes(x='run_umis', y=Count/1000000, fill=Barcode))
 myplot <- myplot + geom_bar(stat='identity',position='stack')+
                 scale_fill_manual(values=c(brewer.pal(6,'Set3'),'gray30', 'blue'))+
                 xlab(NULL) + ylab('Million reads') + theme_bw() 
-print('ggsave doesnt work')
+print("Saving BCsplit_stats.pdf")
 ggsave(paste(OUTDIR, '/BCsplit_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
 
 # Pipeline stats

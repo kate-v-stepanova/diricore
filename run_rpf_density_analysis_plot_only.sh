@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. ./diricore_virtualenv/bin/activate
-
 set -e;
 set -u;
 
@@ -9,29 +7,32 @@ set -u;
 # previously analyzed data. 
 # IMPORTANT: project name and sample names must be exactly as used when the complete script was run
 
+dataset_id=$1
+BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
+PROJECT_DIR="$BASE_DIR/$dataset_id"
 
+OUTDIR="$PROJECT_DIR/analysis/output/rpf_5p_density";
+INDIR="$PROJECT_DIR/analysis/output/tophat_out";
+PLOTDIR="$PROJECT_DIR/analysis/output/figures";
+SAMPLENAME_FILE="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv";
+CONTRAST_FILE="$PROJECT_DIR/analysis/input/metadata/rpf_density_contrasts.tsv";
 
-OUTDIR="./data/output/rpf_5p_density/";
-INDIR="./data/output/tophat_out/";
-PLOTDIR="./data/output/figures/";
-SAMPLENAME_FILE="./data/input/metadata/rpf_density_samplenames.tsv";
-CONTRAST_FILE="./data/input/metadata/rpf_density_contrasts.tsv";
-
-species=$1;
-projectname=$2;
+species=$2;
+projectname=$dataset_id;
 minreads=$3;
 
-INDEXDATA_FILE="./staticdata/${species}/transcript_data.hdf5";
-MAPS_FILE="./staticdata/${species}/codon_regions.width_61.hdf5";
-MAPSSTART_FILE="./staticdata/${species}/codon_regions.START_Other_ATG.width_61.hdf5";
+DIRICORE_DIR="/home/e984a/diricore"
+INDEXDATA_FILE="$DIRICORE_DIR/staticdata/${species}/transcript_data.hdf5";
+MAPS_FILE="$DIRICORE_DIR/staticdata/${species}/codon_regions.width_61.hdf5";
+MAPSSTART_FILE="$DIRICORE_DIR/staticdata/${species}/codon_regions.START_Other_ATG.width_61.hdf5";
 
 
 ###
 # { setup
 of="${OUTDIR}/${projectname}.txcoord_counts.hdf5";
 
-mkdir ${OUTDIR} || true;
-mkdir -p "${PLOTDIR}/rpf_5p_density_plots/" || true;
+mkdir -p ${OUTDIR}
+mkdir -p "${PLOTDIR}/rpf_5p_density_plots/"
 
 # map RPFs to transcriptome coordinates
 #./diricore/bin/map_rpfs_to_transcriptome_positions.py \
@@ -74,7 +75,7 @@ Val\tGTA,GTC,GTG,GTT
     of="${PLOTDIR}/rpf_5p_density_plots/${projectname}.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
 
-    python ./diricore/bin/plot_rpf_5p_density.py \
+    python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
         -o "${of}" \
@@ -93,7 +94,7 @@ ATG_split\tSTART_ATG,Other_ATG
     of="${PLOTDIR}/rpf_5p_density_plots/${projectname}.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
 
-    python ./diricore/bin/plot_rpf_5p_density.py \
+    python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
         -o "${of}" \

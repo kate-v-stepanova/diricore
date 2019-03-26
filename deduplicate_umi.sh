@@ -3,8 +3,12 @@
 set -e;
 set -u;
 
-INDIR="./data/output/tophat_out"
-OUTDIR="./data/output/tophat_out"
+dataset_id=$1
+
+BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
+PROJECT_DIR="$BASE_DIR/$dataset_id"
+INDIR="$PROJECT_DIR/analysis/output/tophat_out"
+OUTDIR="$PROJECT_DIR/analysis/output/tophat_out"
 
 # index
 for d in $(ls ${INDIR}); do

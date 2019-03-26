@@ -1,8 +1,20 @@
 #!/bin/bash
 
-chrom_sizes="./staticdata/human/hg38.chrom.sizes"
-INDIR="./data/output/tophat_out"
-OUTDIR="./data/output/gen_tracks"
+set -e
+set -u
+
+dataset_id=$1
+
+BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
+PROJECT_DIR="$BASE_DIR/$dataset_id"
+DIRICORE_DIR="/home/e984a/diricore"
+
+chrom_sizes="$DIRICORE_DIR/staticdata/human/hg38.chrom.sizes"
+INDIR="$PROJECT_DIR/analysis/output/tophat_out"
+OUTDIR="$PROJECT_DIR/analysis/output/gen_tracks"
+
+BDG2BW="$DIRICORE_DIR/utils/bdg2bw.sh"
+
 mkdir -p $OUTDIR
 
 # Getting bdg files
@@ -21,7 +33,7 @@ done;
 for f in $(ls ${OUTDIR}/*.bdg); do
   bn=$(basename ${f})
   echo "Converting to bigwig "
-  ./bdg2bw.sh $f $chrom_sizes
+  $BDG2BW $f $chrom_sizes
   echo "Done: $(ls ${OUTDIR}/${bn%.*}.bw)"
 done
 

@@ -4,18 +4,25 @@
 set -e;
 set -u;
 
+species=$1
+dataset_id=$2
 
-BOWTIE_PATH="./programs/bowtie2-2.0.6";
-TOPHAT_BIN="./programs/tophat-2.0.7/tophat2";
+DIRICORE_PATH="/home/e984a/diricore"
+BASE_PATH="/icgc/dkfzlsdf/analysis/OE0532"
 
-INDIR="./data/output/clean";
-OUTDIR="./data/output/tophat_out";
+project_path="$BASE_PATH/$dataset_id"
+
+BOWTIE_PATH="$DIRICORE_PATH/programs/bowtie2-2.0.6";
+TOPHAT_BIN="$DIRICORE_PATH/programs/tophat-2.0.7/tophat2";
+
+INDIR="$project_path/analysis/output/clean";
+OUTDIR="$project_path/analysis/output/tophat_out";
 
 species=$1;
 
-REF="./staticdata/${species}/genome";
-GTF="./staticdata/${species}/transcripts.gff";
-TIDX="./staticdata/${species}/transcripts";
+REF="$DIRICORE_PATH/staticdata/${species}/genome";
+GTF="$DIRICORE_PATH/staticdata/${species}/transcripts.gff";
+TIDX="$DIRICORE_PATH/staticdata/${species}/transcripts";
 
 
 ###

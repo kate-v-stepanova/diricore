@@ -16,7 +16,10 @@ import seaborn
 seaborn.reset_orig()
 import numpy
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../lib/'))
+# sys.path.append(os.path.join(os.path.dirname(__file__), '../lib/'))
+sys.path.append("/home/e984a/diricore/diricore/lib")
+
+
 from plottxcoords import get_means, read_sampleinfo
 
 
@@ -51,7 +54,6 @@ def plot_5p_rpf_density_difference(h5fn, pairs, codongroups, h5mapsfn, min_reads
 
     figsize = calc_figsize((len(pairs), len(codongroups)), SUBPLOTSIZE, SUBPLOTPARS)
     fig, axs = pyplot.subplots(len(pairs), len(codongroups), sharex=True, sharey=True, squeeze=False, figsize=figsize)
-
     for i_pair, pairdata in enumerate(pairs):
         refsampleid, condsampleid, linecolor = pairdata
         samples = [(h5fn, condsampleid, None), (h5fn, refsampleid, None)]

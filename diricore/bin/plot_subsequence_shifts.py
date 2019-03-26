@@ -8,7 +8,8 @@ import os
 import sys
 from itertools import imap
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../lib/'))
+# sys.path.append(os.path.join(os.path.dirname(__file__), '../lib/'))
+sys.path.append("/home/e984a/diricore/diricore/lib")
 from plotutils.codon_barplot import codon_barplot
 from calculate_subsequence_shift import calculate_subsequence_shift, CODONS
 
@@ -36,7 +37,8 @@ line2fields = lambda line: line.rstrip("\n").split("\t")
 def parse_contrast(fh):
     l = list()
     for fields in imap(line2fields, fh):
-        condsampleid, refsampleid = fields
+        condsampleid = fields[0] 
+        refsampleid = fields[1]
         l.append((condsampleid, refsampleid))
 
     return l
@@ -75,7 +77,7 @@ def main():
     contrasts = parse_contrast(open(args.contrasts))
 
     h5fn = args.h5file[0]
-    assert os.access(h5fn, os.R_OK)
+    # assert os.access(h5fn, os.R_OK)
 
     if args.sample_names:
         sample_names = parse_sample_names(open(args.sample_names))

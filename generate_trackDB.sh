@@ -1,8 +1,19 @@
 #!/bin/bash
 
+set -e
+set -u
 
-OUTDIR="./data/output/gen_tracks"
-bc_file="./data/input/metadata/bc_file.txt"
+dataset_id=$1
+
+BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
+PROJECT_DIR="$BASE_DIR/$dataset_id"
+
+OUTDIR="$PROJECT_DIR/analysis/output/gen_tracks"
+bc_file="$PROJECT_DIR/analysis/input/metadata/bc_file.txt"
+
+rm -f ${OUTDIR}/UCSC_TrackDb.txt
+touch ${OUTDIR}/UCSC_TrackDb.txt
+
 echo -e "
   track run_UMIs
   superTrack on show
@@ -48,4 +59,4 @@ for i in $samples; do
 
   \t\t####################################
   "
-  done >> ${OUTDIR}/UCSC_TrackDb.txt
+done >> ${OUTDIR}/UCSC_TrackDb.txt

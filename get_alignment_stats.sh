@@ -1,7 +1,11 @@
 #!/bin/bash
 
-INDIR="./data/output/tophat_out"
-OUTDIR="./data/output/alignment_stats"
+dataset_id=$1
+
+BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
+PROJECT_DIR="$BASE_DIR/$dataset_id"
+INDIR="$PROJECT_DIR/analysis/output/tophat_out"
+OUTDIR="$PROJECT_DIR/analysis/output/alignment_stats"
 
 mkdir -p ${OUTDIR}
 
