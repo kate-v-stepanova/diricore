@@ -186,39 +186,18 @@ bsub -q medium ./run_umi_rpf_density_analysis.sh 13728 human 25
 bsub ./run_umi_subsequence_analysis.sh 13728 human 25
 ```
 
-
----------
-
-## RPF Density
-
-````bash
-# Using deduped data
-./run_umi_rpf_density_analysis.sh human 20190123_Umi 15
-# Using all hq algs
-./run_rpf_density_analysis.sh human 20190123_allHQ 15
-# Transfer data
-scp -r data/output/figures/rpf_5p_density_plots/ 156.35.56.111:/home/jandrulas/Sync/Uniovi_new/Fabricio/20190123_run/Plots/
-````
-
-
-## Subsequence analysis
-````bash
-# Create contrast from rpf_density_contrasts
-cut -f1,2 data/input/metadata/rpf_density_contrasts.tsv > data/input/metadata/subsequence_contrasts.tsv
-cp data/input/metadata/rpf_density_samplenames.tsv data/input/metadata/subsequence_samplenames.tsv
-# Run analysis using deduped data
-./run_umi_subsequence_analysis.sh human 20190123_Umi 25
-# Using all hq algs
-./run_subsequence_analysis.sh human 20190123_allHQ 25
-# Transfer Data
-scp -r data/output/figures/subsequence_shift_plots/ 156.35.56.111:/home/jandrulas/Sync/Uniovi_new/Fabricio/20190123_run/Plots/
-````
-
 ## RPF transcript distribution
 
-````bash
-# Using deduped algs
-./plot_rpf_transcript_distribution.sh 20190123_Umi 25 20190123_Umi
-# Using all hq reads
-./plot_rpf_transcript_distribution.sh 20190123_allHQ 25 20190123_allHQ
-````
+Requires `/icgc/dkfzlsdf/analysis/OE0532/13728/analysis/input/metadata/rpf_transcript_distribution_sampleinfo.tsv`:
+
+```
+Ha      C       #ff99bb
+Roca    C       #80e5ff
+Ha_Roca C       #99ffdd
+```
+
+Running script:
+
+```
+./plot_rpf_transcript_distribution.sh 13728 25_allHQ 25 20190123_allHQ
+```
