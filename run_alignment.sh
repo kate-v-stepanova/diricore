@@ -31,22 +31,20 @@ ls -1 ${INDIR}/*.fastq.gz | while read fn; do
     b=${bn%%.*};
 
     od="${OUTDIR}/${b}";
-    mkdir -p "${od}" 2> /dev/null || true;
+    mkdir -p "${od}"
     thout="${OUTDIR}/${b}/tophat.out"
     therr="${OUTDIR}/${b}/tophat.err"
 
     echo "Starting alignment of file: $bn";
 
-    PATH="${BOWTIE_PATH}:$PATH" \
-        ${TOPHAT_BIN} --seed 42 -n 2 -m 1 \
+    PATH=${BOWTIE_PATH}:$PATH  ${TOPHAT_BIN} --seed 42 -n 2 -m 1 \
         --no-novel-juncs --no-novel-indels --no-coverage-search \
         --segment-length 25 \
-        --transcriptome-index "${TIDX}" -G "${GTF}" \
-        -o "${od}" \
-        -p 1 "${REF}" "${fn}" \
-        > "${thout}" 2> "${therr}";
+	--transcriptome-index ${TIDX} -G ${GTF} \
+        -o ${od} \
+        -p 1 ${REF} ${fn} \
+        > ${thout} 2> ${therr};
 done
-
 echo "Done with alignments; now filtering out non-primary/low-quality alignments";
 
 # isolate "hqmapped" reads
@@ -62,5 +60,4 @@ ls -1 ${OUTDIR}/*/accepted_hits.bam | while read fn; do
 done
 
 echo "Done filtering";
-exit 0;
 ###

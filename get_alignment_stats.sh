@@ -9,7 +9,7 @@ OUTDIR="$PROJECT_DIR/analysis/output/alignment_stats"
 
 mkdir -p ${OUTDIR}
 
-# Get useful alignment number (HQ_aligns)
+# Get useful alignment number (HQ_aligns) before dedup
 rm -f ${OUTDIR}/alignment_hq_stats.txt
 touch ${OUTDIR}/alignment_hq_stats.txt
 for inf in $(ls ${INDIR}/*/accepted_hits.hqmapped.bam); do
@@ -30,6 +30,6 @@ rm -f ${OUTDIR}/alignment_multimap_stats.txt
 touch ${OUTDIR}/alignment_multimap_stats.txt
 for inf in $(ls ${INDIR}/*/accepted_hits.bam); do
   bn=$(basename $(dirname $inf))
-  echo -e "Doing file $inf" >&2
+  echo -e "Doing file $inf"
   samtools view -F 0x100 $inf | awk '{print $5}' | sort | uniq -c  | sed "s,^,${bn} ," >> ${OUTDIR}/alignment_multimap_stats.txt
 done

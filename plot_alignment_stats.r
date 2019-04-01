@@ -19,8 +19,8 @@ INDIR=paste(PROJECT_DIR, "analysis/output/alignment_stats", sep="/")
 OUTDIR=paste(PROJECT_DIR, "analysis/output/figures", sep="/")
 BC_SPLIT_FILE=paste(PROJECT_DIR, "analysis/output/bc_split_stats.txt", sep="/")
 
-# Manually input data from Logs/cutadapt_trimming_stats.txt
-print("Manually input data from Logs/cutadapt_trimming_stats.txt")
+# Manually input data from cutadapt_trimming_stats.txt
+print("Manually input data from cutadapt_trimming_stats.txt")
 
 mydt <- data.table(
       'Reads' = c('No_adapt','Too_short','Passed'),
@@ -28,14 +28,13 @@ mydt <- data.table(
 
 myplot <- ggplot(mydt,aes(x='run_umis',y=Counts/1000000, fill=Reads))
 myplot <- myplot + geom_bar(stat='identity',position='stack')+
-      theme_bw()+xlab(NULL)+ ylab('Million reads')
+      theme_bw()+xlab(NULL)+ ylab('Milion Reads')
 ggsave(paste(OUTDIR, '/Cutadapt_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
 
 # BC stats
 print("BC stats")
 
 mydt <- fread(BC_SPLIT_FILE, fill=T)
-# mydt <- fread('Logs/bc_split_stats.txt',fill=T)
 mydt <- mydt[1:nrow(mydt) -1]
 myplot <- ggplot(mydt, aes(x='run_umis', y=Count/1000000, fill=Barcode))
 myplot <- myplot + geom_bar(stat='identity',position='stack')+
@@ -49,42 +48,38 @@ ggsave(paste(OUTDIR, '/BCsplit_stats.pdf', sep=""), myplot, width = 2.5, height 
 # HQ Aligns
 print("HQ Aligns")
 mydt <- fread(paste(INDIR, '/alignment_hq_stats.txt', sep=""), col.names=c('file', 'HQ_algs'))
-mydt[,file:=dirname(file)]
-
+mydt[,file:=basename(dirname(file))]
 # Dedup Aligns
 print("Dedup Aligns")
 dt <- fread(paste(INDIR, '/alignment_dedup_stats.txt', sep=""), col.names=c('file', 'Dedup_algs'))
-dt[,file:=dirname(file)]
+dt[, file:=basename(dirname(file))]
 mydt <- merge(mydt,dt, by='file')
 
 # Discarded alignments
 print("Discarded alignments")
 dt <- fread(paste(INDIR, '/alignment_multimap_stats.txt', sep=""), col.names=c('file', 'N','MAPQ'))
+### WHAT IS < 50 ??
 dt <-  dt[,.(Multimappers=sum(N[MAPQ < 50])), by=.(file)]
 mydt <- merge(mydt,dt, by='file')
-
 # rRNA cleanup
 print("rRNA cleanup")
-dt <- fread(paste(INDIR, '/RNA_cleup_stats.txt', sep=""))
+dt <- fread(paste(INDIR, '/RNA_clenup_stats.txt', sep=""))
 mydt <- merge(mydt,dt, by='file')
 
 # Fix file name
 print("Fix file name")
-# print(file)
-write.table(mydt, 'debug.txt',sep='\t', quote=F, row.names=F)
-
-# print(mydt[,file:=gsub('run_umi_(.*)_umied', "\\1", file)])
-# mydt[,file:= gsub('run_umi_(.*)_umied',"\\1",file)]
+mydt[,file:= gsub('dem_(.*)_umi_extracted',"\\1",file)]
 
 # Add initial reads (after bc split)
 print("Add initial reads (after bc split)")
 dt <- fread(BC_SPLIT_FILE,fill=T,select = c('Barcode','Count'))
-dt <- dt[1:nrow(mydt) -1]
+# dt <- dt[1:nrow(mydt) -1]
 colnames(dt) <- c('file','Initial_reads')
 mydt <- merge(mydt,dt, by='file')
 
 # Create stats
-print("Create stats")
+print("Create diricore stats")
+# print(mydt)
 mysum <- mydt[,.(
       'file'=file,
       'rRNA_reads'= Initial_reads - rrnaleft,

@@ -21,7 +21,7 @@ TRNA_REF="$DIRICORE_PATH/staticdata/${species}/tRNAs";
 
 
 ###
-mkdir -p $OUTDIR || true;
+mkdir -p $OUTDIR
 
 run_prep() {
     fn=$1

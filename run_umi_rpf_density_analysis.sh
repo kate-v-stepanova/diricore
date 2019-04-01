@@ -28,6 +28,10 @@ INDEXDATA_FILE="$DIRICORE_DIR/staticdata/${species}/transcript_data.hdf5";
 MAPS_FILE="$DIRICORE_DIR/staticdata/${species}/codon_regions.width_61.hdf5";
 MAPSSTART_FILE="$DIRICORE_DIR/staticdata/${species}/codon_regions.START_Other_ATG.width_61.hdf5";
 
+# Checking that files are present
+ls $INDEXDATA_FILE
+ls $MAPS_FILE
+ls $MAPSSTART_FILE
 
 ###
 # { setup

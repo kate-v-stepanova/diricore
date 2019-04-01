@@ -25,7 +25,7 @@ mkdir -p /icgc/dkfzlsdf/analysis/OE0532/14548/analysis/input/metadata
 ```
 bsub -q long ./trim_adapter_and_demultiplex.sh /icgc/dkfzlsdf/analysis/OE0532/14548/190308_M01688_0156_000000000-C9C58
 ```
-
+--
 Results are the following:
 
 ```
@@ -48,12 +48,15 @@ total 463M
 -rw-r--r--. 1 e984a B250 5.1M Mar 22 13:44 dem_unmatched_umi_extracted.fastq.gz
 ```
 
-## rRNA clean up
+## rRNA and tRNA clean up - UMI preprocessing
 
 ```
 bsub -q long ./run_umi_preprocessing.sh human 14548
 
 ```
+Input from `/icgc/dkfzlsdf/analysis/OE0532/14548/analysis/input/fastq`
+Output in `/icgc/dkfzlsdf/analysis/OE0532/14548/analysis/output/clean`
+
 
 ## Alignment
 
