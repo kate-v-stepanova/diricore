@@ -27,24 +27,22 @@ PROJECT_DIR="$BASE_DIR/$dataset_id"
 OUTDIR="$PROJECT_DIR/analysis/output/subsequence_data";
 INDIR="$PROJECT_DIR/analysis/output/tophat_out";
 PLOTDIR="$PROJECT_DIR/analysis/output/figures";
-SAMPLENAME_FILE="$PROJECT_DIR/analysis/input/metadata/subsequence_samplenames.tsv";
-CONTRAST_FILE="$PROJECT_DIR/analysis/input/metadata/subsequence_contrasts.tsv";
-RPF_CONTRASTS="$PROJECT_DIR/analysis/input/metadata/rpf_density_contrasts.tsv";
-RPF_SAMPLENAME="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv"
+CONTRASTS="$PROJECT_DIR/analysis/input/metadata/rpf_density_contrasts.tsv";
+SAMPLENAMES="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv"
 DIRICORE_DIR="/home/e984a/diricore"
 INDEXDATAFN="$DIRICORE_DIR/staticdata/${species}/subseq_index_data.pkl.gz";
 
-frame_file="${OUTDIR}/${projectname}.subsequence_data.frame0.hq.hdf5"
+frame_file="${OUTDIR}/${projectname}.subsequence_data.frame0.hdf5"
 hq_frame_file="${OUTDIR}/${projectname}.subsequence_data.frame0.hq.hdf5"
 
 
-if [ ! -f ${CONTRAST_FILE} ]; then
-    cut -f1,2 ${RPF_CONTRASTS} > ${CONTRAST_FILE}
-fi
+#if [ ! -f ${CONTRAST_FILE} ]; then
+#    cut -f1,2 ${RPF_CONTRASTS} > ${CONTRAST_FILE}
+#fi
 
-if [ ! -f ${SAMPLENAME_FILE} ]; then
-    cp ${RPF_SAMPLENAME} ${SAMPLENAME_FILE}
-fi
+#if [ ! -f ${SAMPLENAME_FILE} ]; then
+#    cp ${RPF_SAMPLENAME} ${SAMPLENAME_FILE}
+#fi
 
 ###
 mkdir -p ${OUTDIR}
@@ -93,8 +91,8 @@ echo "Creating HQ plots"
 $DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
     -o ${PLOTDIR}/subsequence_shift_plots/${projectname}.hq.m${minreads}. \
     -m $minreads \
-    --sample-names ${SAMPLENAME_FILE} \
-    --contrasts ${CONTRAST_FILE} \
+    --sample-names ${SAMPLENAMES} \
+    --contrasts ${CONTRASTS} \
     ${hq_frame_file}
 echo "Created plots in ${PLOTDIR}/subsequence_shift_plots"
 ###
@@ -104,8 +102,8 @@ echo "Creating ALL plots"
 $DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
     -o ${PLOTDIR}/subsequence_shift_plots/${projectname}.all.m${minreads}. \
     -m $minreads \
-    --sample-names ${SAMPLENAME_FILE} \
-    --contrasts ${CONTRAST_FILE} \
+    --sample-names ${SAMPLENAMES} \
+    --contrasts ${CONTRASTS} \
     ${frame_file}
 echo "Created plots in ${PLOTDIR}/subsequence_shift_plots"
 

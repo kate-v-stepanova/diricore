@@ -6,13 +6,10 @@ set -u;
 dataset_id=$1
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR="$BASE_DIR/$dataset_id"
-defaultmeta="$PROJECT_DIR/analysis/input/metadata/rpf_transcript_distribution_sampleinfo.tsv"
-
+metafile="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv"
 
 project=$dataset_id
 minreads=${2};
-outname=$dataset_id
-metafile=${defaultmeta};
 
 OUTDIR="$PROJECT_DIR/analysis/output/figures/rpf_transcript_distribution";
 TXFILE="$PROJECT_DIR/analysis/output/rpf_5p_density/${project}.txcoord_counts.hdf5";
@@ -21,7 +18,7 @@ python_bin="$DIRICORE_DIR/diricore/bin/plot_rpf_transcript_distribution.py";
 
 mkdir -p ${OUTDIR}
 
-outfile="${OUTDIR}/${project}.rpf_transcript_distribution_plot.${outname}.pdf"
+outfile="${OUTDIR}/${project}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
 
 sampinfo=`cat $metafile | while read -a LINE
 do
