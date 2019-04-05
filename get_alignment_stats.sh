@@ -13,23 +13,33 @@ mkdir -p ${OUTDIR}
 rm -f ${OUTDIR}/alignment_hq_stats.txt
 touch ${OUTDIR}/alignment_hq_stats.txt
 for inf in $(ls ${INDIR}/*/accepted_hits.hqmapped.bam); do
- c=$(samtools view -c $inf)
- echo -e "${inf}\t${c}" >> ${OUTDIR}/alignment_hq_stats.txt
+  unmatched=$(basename $(dirname ${inf}))
+  echo $unmatched
+  if [[ "$unmatched" != "dem_unmatched_umi_extracted" ]]; then
+    c=$(samtools view -c $inf)
+    echo -e "${inf}\t${c}" >> ${OUTDIR}/alignment_hq_stats.txt
+  fi
 done;
 
 # Get deduped alignment number
 rm -f ${OUTDIR}/alignment_dedup_stats.txt
 touch ${OUTDIR}/alignment_dedup_stats.txt
 for inf in $(ls ${INDIR}/*/accepted_hits.hqmapped_dedup.bam); do
- c=$(samtools view -c $inf)
- echo -e "${inf}\t${c}" >> ${OUTDIR}/alignment_dedup_stats.txt
+  unmatched=$(basename $(dirname ${inf}))
+  echo $unmatched
+  if [[ "$unmatched" != "dem_unmatched_umi_extracted" ]]; then
+      c=$(samtools view -c $inf)
+      echo -e "${inf}\t${c}" >> ${OUTDIR}/alignment_dedup_stats.txt
+  fi
 done;
 
 # Get multimap stats
 rm -f ${OUTDIR}/alignment_multimap_stats.txt
 touch ${OUTDIR}/alignment_multimap_stats.txt
 for inf in $(ls ${INDIR}/*/accepted_hits.bam); do
-  bn=$(basename $(dirname $inf))
-  echo -e "Doing file $inf"
-  samtools view -F 0x100 $inf | awk '{print $5}' | sort | uniq -c  | sed "s,^,${bn} ," >> ${OUTDIR}/alignment_multimap_stats.txt
+   bn=$(basename $(dirname $inf))
+   if [[ "$bn" != "dem_unmatched_umi_extracted" ]]; then
+      echo -e "Doing file $inf"
+      samtools view -F 0x100 $inf | awk '{print $5}' | sort | uniq -c  | sed "s,^,${bn} ," >> ${OUTDIR}/alignment_multimap_stats.txt
+   fi
 done
