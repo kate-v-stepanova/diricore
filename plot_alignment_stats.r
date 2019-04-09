@@ -18,17 +18,22 @@ PROJECT_DIR=paste(BASE_DIR, dataset_id, sep="/")
 INDIR=paste(PROJECT_DIR, "analysis/output/alignment_stats", sep="/")
 OUTDIR=paste(PROJECT_DIR, "analysis/output/figures", sep="/")
 BC_SPLIT_FILE=paste(PROJECT_DIR, "analysis/output/bc_split_stats.txt", sep="/")
+cutadapt_file=paste(PROJECT_DIR, "analysis/output/cutadapt_plot_stats.txt", sep="/")
 
 # Manually input data from cutadapt_trimming_stats.txt
-print("Manually input data from cutadapt_trimming_stats.txt")
+print("Parsing cutadapt_plot_stats.txt")
 
+lines <- scan(cutadapt_file, what=double())
+no_adapt = lines[0] - lines[1]
+too_short = lines[2]
+passed = lines[3]
 mydt <- data.table(
       'Reads' = c('No_adapt','Too_short','Passed'),
-      'Counts' = c(263519465-233487367, 140206555,93280812))
+      'Counts' = c(no_adapt, too_short, passed))
 
 myplot <- ggplot(mydt,aes(x='run_umis',y=Counts/1000000, fill=Reads))
 myplot <- myplot + geom_bar(stat='identity',position='stack')+
-      theme_bw()+xlab(NULL)+ ylab('Milion Reads')
+     theme_bw()+xlab(NULL)+ ylab('Milion Reads')
 ggsave(paste(OUTDIR, '/Cutadapt_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
 
 # BC stats
