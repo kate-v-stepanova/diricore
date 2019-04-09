@@ -47,7 +47,7 @@ def parse_contrast(fh):
 def parse_sample_names(fh):
     d = dict()
     for fields in imap(line2fields, fh):
-        identifier, name = fields
+        identifier, name, color  = fields
         assert identifier not in d
         d[identifier] = name
 
@@ -73,7 +73,9 @@ def main():
         # ylimits = map(float, [0,100])
         ylimits = map(float, [-5, 5])
     else:
-        ylimits = map(float, ylims_str.split(","))
+        ylimits = float(ylims_str)
+        ylimits = [-1*ylimits, ylimits]
+        ylimits = map(float, ylimits)
 
     contrasts = parse_contrast(open(args.contrasts))
 
