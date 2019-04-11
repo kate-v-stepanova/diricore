@@ -26,8 +26,12 @@ print(fragment_files)
 
 for (f in fragment_files) {
  # plot everything without filtering
- dt <- fread(f, col.names=c('Counts', 'Size'))
- plot <- ggplot(dt, aes(x=Size, y=Counts))
- plot <- plot + geom_bar(stat='identity', width=1, fill='#4a7dc4', col='gray40')+theme_bw()+ylab('Milion Reads')+xlab('Size of protected fragment(nt)')
-ggsave(paste(OUTDIR, "/", file_path_sans_ext(basename(f)), ".pdf", sep=""), plot)
+ if (file.info(f)$size == 0) {
+   print(paste("File empty! Skipping:", f))
+ } else {
+   dt <- fread(f, col.names=c('Counts', 'Size'))
+   plot <- ggplot(dt, aes(x=Size, y=Counts))
+   plot <- plot + geom_bar(stat='identity', width=1, fill='#4a7dc4', col='gray40')+theme_bw()+ylab('Milion Reads')+xlab('Size of protected fragment(nt)')
+  ggsave(paste(OUTDIR, "/", file_path_sans_ext(basename(f)), ".pdf", sep=""), plot)
+ }
 }
