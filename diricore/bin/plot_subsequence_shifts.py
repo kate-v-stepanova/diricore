@@ -71,7 +71,7 @@ def main():
     if ylims_str is None:
         # ylimits = None
         # ylimits = map(float, [0,100])
-        ylimits = map(float, [-5, 5])
+        ylimits = map(float, [-1, 1])
     else:
         ylimits = float(ylims_str)
         ylimits = [-1*ylimits, ylimits]

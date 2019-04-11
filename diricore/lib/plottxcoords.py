@@ -65,12 +65,14 @@ def get_means(samples, codongroups, h5mapsfn, min_reads, intersect=False, smooth
     return means, passing_cutoff
 
 
-def read_sampleinfo(fn):
+def read_sampleinfo(fn, cols_num=None):
     fh = open(fn)
     samples = []
     for line in fh:
         line = line.rstrip()
         fields = line.split("\t")
+        if cols_num is not None and len(fields) > cols_num:
+            fields = fields[0:cols_num]
         samples.append(tuple(fields))
 
     return samples

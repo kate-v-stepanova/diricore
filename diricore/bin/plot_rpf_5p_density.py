@@ -130,13 +130,11 @@ def main():
     args = ap.parse_args()
 
     h5mapsfn = args.h5mapsfile[0]
-
     pairs = read_sampleinfo(args.contrasts)
-
     if args.sample_names is not None:
-        sample_names = dict(read_sampleinfo(args.sample_names))
-
-        for (refsampleid, condsampleid, linecolor) in pairs:
+        sampleinfo = read_sampleinfo(args.sample_names, cols_num=2)
+        sample_names = dict(sampleinfo)
+        for (refsampleid, condsampleid, color) in pairs:
             assert refsampleid in sample_names
             assert condsampleid in sample_names
     else:
