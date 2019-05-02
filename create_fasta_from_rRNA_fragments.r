@@ -14,6 +14,8 @@ if (length(args)<2) {
    trna=args[2]
    if (trna == "trna") {
       trna=T
+   } else {
+      trna=F
    }
 }
 

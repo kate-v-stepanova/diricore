@@ -9,6 +9,8 @@ if (length(args) <2 ) {
     trna = args[2]
     if (trna == "trna") {
         trna=T
+    } else {
+        trna=F
     }
     if (length(args) == 3) {
         number_of_genes_per_plot=as.integer(args[3])
@@ -20,7 +22,7 @@ if (length(args) <2 ) {
 
 require(ggplot2)
 require(data.table)
-print(trna)
+
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR=paste(BASE_DIR, dataset_id, sep="/")
 if (trna) {

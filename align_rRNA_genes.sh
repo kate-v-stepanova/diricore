@@ -2,29 +2,27 @@
 
 
 project_id=$1
+DIRICORE_PATH="/home/e984a/diricore"
+blat_path="$DIRICORE_PATH/programs/blat_for_linux"
+BASE_PATH="/icgc/dkfzlsdf/analysis/OE0532"
+PROJECT_PATH="$BASE_PATH/$project_id"
+# GENOME_PATH="$BASE_PATH/static/hg19/hg19.2bit"
+PSL_PARSER="$DIRICORE_PATH/utils/parse_psl.py"
+GENOME_PATH="$BASE_PATH/static/hg19/rRNA_genes.2bit"
+
 
 trna=0
 prefix="rRNA"
 if [[ $# -ge 2 ]]; then
    trna=$2
-   prefix="tRNA"
+   if [[ $trna == 'trna' ]]; then
+       prefix="tRNA"
+       INDIR="$PROJECT_PATH/analysis/output/trna_fragments"
+   else
+      prefix="rRNA"
+      INDIR="$PROJECT_PATH/analysis/output/rrna_fragments"
+   fi
 fi
-
-DIRICORE_PATH="/home/e984a/diricore"
-blat_path="$DIRICORE_PATH/programs/blat_for_linux"
-BASE_PATH="/icgc/dkfzlsdf/analysis/OE0532"
-PROJECT_PATH="$BASE_PATH/$project_id"
-
-if [[ $trna == 0 ]]; then
-    INDIR="$PROJECT_PATH/analysis/output/rrna_fragments"
-else 
-    INDIR="$PROJECT_PATH/analysis/output/trna_fragments"
-fi
-
-
-GENOME_PATH="$BASE_PATH/static/hg38/hg38.2bit"
-
-PSL_PARSER="$DIRICORE_PATH/utils/parse_psl.py"
 
 for fasta_file in $(ls $INDIR/*.fasta); do
     sample_name=$(basename $fasta_file)

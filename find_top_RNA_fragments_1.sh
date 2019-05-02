@@ -11,25 +11,29 @@ else
   counts=100
 fi
 
-prefix="rRNA"
-trna=0
-if [[ $# -ge 3 ]]; then
-   trna=$3
-   prefix="tRNA"
-fi
-
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR="$BASE_DIR/$dataset_id"
 DIRICORE_DIR="/home/e984a/diricore"
-REF="$DIRICORE_DIR/staticdata/human/${prefix}s"
+
 BOWTIE="$DIRICORE_DIR/programs/bowtie2-2.0.6/bowtie2"
 INDIR="$PROJECT_DIR/analysis/input/fastq"
 
-if [[ $trna == 0 ]]; then
-    OUTDIR="$PROJECT_DIR/analysis/output/rrna_fragments"
-else 
-    OUTDIR="$PROJECT_DIR/analysis/output/trna_fragments"
+
+prefix="rRNA"
+trna=0
+OUTDIR="$PROJECT_DIR/analysis/output/rrna_fragments"
+if [[ $# -ge 3 ]]; then
+   trna=$3
+   if [[ $trna == 'trna' ]]; then
+       prefix="tRNA"
+       OUTDIR="$PROJECT_DIR/analysis/output/trna_fragments"
+   else
+       prefix="rRNA"
+       OUTDIR="$PROJECT_DIR/analysis/output/rrna_fragments"
+   fi
 fi
+
+REF="$DIRICORE_DIR/staticdata/human/${prefix}s"
 
 mkdir -p $OUTDIR
 
@@ -39,9 +43,11 @@ for f in $(ls ${INDIR}/*.fastq.gz); do
     sample_name="${sample_name%%.*}"
     tmp_file="$OUTDIR/${sample_name}_bowtie_out.tmp.bam"
     out_file="$OUTDIR/${sample_name}_top_${prefix}_seqs.txt"
+    rm $out_file
+    touch $out_file
     zcat $f | $BOWTIE --seed 42 -p 1 --local  $REF - > $tmp_file
     # echo "Counts	Seq" > out_file
-    samtools view -F 0x4 $tmp_file | awk '{print $10}' | sort -T $OUTDIR | uniq -c | awk '$1 >= '$counts' {print $1,$2,$3,$4}' | sort -k1nr > $out_file
+    samtools view -F 0x4 $tmp_file | awk '{print $10}' | sort -T $OUTDIR | uniq -c | awk '$1 >= '$counts' {print $1,$2,$3,$4}' | sort -k1nr >> $out_file
     rm -f $tmp_file
     echo "Created $out_file"
 done

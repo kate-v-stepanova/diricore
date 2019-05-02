@@ -19,15 +19,18 @@ PROJECT_DIR=paste(BASE_DIR, dataset_id, sep="/")
 
 if (trna) {
     input_dir=paste(PROJECT_DIR, "analysis/output/trna_fragments", sep="/")
+    pattern = "*_top_tRNA_seqs.txt"
 } else {
     input_dir=paste(PROJECT_DIR, "analysis/output/rrna_fragments", sep="/")
+    pattern = "*_top_rRNA_seqs.txt"
 }
+
 
 require(data.table)
 require(Biostrings)
-require(ggplot2)
+# require(ggplot2)
 
-for (input_file in list.files(input_dir, pattern="*_top_tRNA_seqs.txt")) {
+for (input_file in list.files(input_dir, pattern=pattern)) {
     print(paste("Processing", input_file))
     output_file=paste(input_dir, paste("grouped_", strsplit(input_file, '[.]')[[1]][1], ".txt", sep=""), sep="/")
     filename=paste(input_dir, input_file, sep="/")
