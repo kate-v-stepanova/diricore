@@ -3,22 +3,26 @@
 set -e;
 set -u;
 
+BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
+project_id=$1
+project_dir="$BASE_DIR/$project_id"
 
-BOWTIE_BIN="./programs/bowtie2-2.0.6/bowtie2";
-INDIR="./data/input/fastq";
-OUTDIR="./data/output/clean";
+INDIR="$project_dir/analysis/input/fastq";
+OUTDIR="$project_dir/analysis/output/clean";
 
-species=$1
-adapter=$2;
+species=$2
+# adapter=$3;
 
-RRNA_REF="./staticdata/${species}/rRNAs";
-TRNA_REF="./staticdata/${species}/tRNAs";
-
+RRNA_REF="$BASE_DIR/static/${species}/rRNAs";
+TRNA_REF="$BASE_DIR/static/${species}/tRNAs";
+BOWTIE_BIN="/home/e984a/diricore/programs/bowtie2-2.0.6/bowtie2"
 
 ###
 mkdir -p $OUTDIR || true;
 
 ls -1 ${INDIR}/*.fastq.gz | while read fn; do
+    echo "Starting preprocessing of file: ${fn}";
+
     bn=$(basename "$fn");
     b=${bn%%.*};
 
@@ -28,24 +32,12 @@ ls -1 ${INDIR}/*.fastq.gz | while read fn; do
     rrna_err="${OUTDIR}/${b}.rrna.err";
     trna_err="${OUTDIR}/${b}.trna.err";
 
-    tmpfile="/tmp/${b}.rrna_cleaned.tmp.fastq.gz";
+    tmpfile="${INDIR}/${b}.rrna_cleaned.tmp.fastq.gz";
     rm -f $tmpfile;
-    $(cp ${INDIR}/${b}.fastq.gz $tmpfile);
+    cp ${INDIR}/${b}.fastq.gz $tmpfile
     trap "{ rm -f ${tmpfile}; }" EXIT;
-
-    echo "Starting preprocessing of file: ${bn}";
-    cat "${fn}" \
-    | gzip -dc \
-    | cutadapt --quality-base=33 -a "${adapter}" -O 7 -e 0.15 -m 20 -q 5 --untrimmed-output=/dev/null - 2> "${ca_err}" \
-    | cutadapt --quality-base=33 -a "GGCATTAACGCGAACTCGGCCTACAATAGT" -a "AAGCGTGTACTCCGAAGAGGATCCAAA" -O 7 -e 0.15 -m 20 - 2> "${ca2_err}" \
-    | ${BOWTIE_BIN} --seed 42 -p 1 --local --un-gz "${tmpfile}" "${RRNA_REF}" - \
-    > /dev/null 2> "${rrna_err}";
-
-    cat "${tmpfile}" \
-    | gzip -dc \
-    | ${BOWTIE_BIN} --seed 42 --local --un-gz "${of}" "${TRNA_REF}" - \
-    > /dev/null 2> "${trna_err}";
-
+    cat "${fn}" | gzip -dc | ${BOWTIE_BIN} --seed 42 -p 1 --local --un-gz "${tmpfile}" "${RRNA_REF}" -  # > /dev/null
+    cat "${tmpfile}" | gzip -dc  | ${BOWTIE_BIN} --seed 42 --local --un-gz "${of}" "${TRNA_REF}" - # > /dev/null # 2> "${trna_err}";
     rm -f ${tmpfile};
 done
 
