@@ -20,13 +20,13 @@ OUTDIR=paste(PROJECT_DIR, "analysis/output/figures", sep="/")
 BC_SPLIT_FILE=paste(PROJECT_DIR, "analysis/output/bc_split_stats.txt", sep="/")
 cutadapt_file=paste(PROJECT_DIR, "analysis/output/cutadapt_plot_stats.txt", sep="/")
 
-# Manually input data from cutadapt_trimming_stats.txt
+print("Please create analysis/output/cutadapt_plot_stats.txt file with the command ./utils/extract_cutadapt_stats.sh")
 print("Parsing cutadapt_plot_stats.txt")
 
-lines <- scan(cutadapt_file, what=double())
-no_adapt = lines[0] - lines[1]
-too_short = lines[2]
-passed = lines[3]
+lines <- read.csv(file=cutadapt_file, sep="\t", colClasses=c("NULL", NA), header=F)
+no_adapt = lines[1,] - lines[2,]
+too_short = strtoi(lines[3,])
+passed = strtoi(lines[4,])
 mydt <- data.table(
       'Reads' = c('No_adapt','Too_short','Passed'),
       'Counts' = c(no_adapt, too_short, passed))
