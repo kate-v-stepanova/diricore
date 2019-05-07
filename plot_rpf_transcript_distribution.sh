@@ -10,12 +10,14 @@ metafile="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv"
 
 project=$dataset_id
 minreads=${2};
+genome=$3
 
 OUTDIR="$PROJECT_DIR/analysis/output/figures/rpf_transcript_distribution";
 TX_ALL="$PROJECT_DIR/analysis/output/rpf_5p_density/${project}.txcoord_counts.all.hdf5";
 TX_ALL_DEDUP="$PROJECT_DIR/analysis/output/rpf_5p_density/${project}.txcoord_counts.all.dedup.hdf5";
 TX_HQ="$PROJECT_DIR/analysis/output/rpf_5p_density/${project}.txcoord_counts.hq.hdf5";
 TX_HQ_DEDUP="$PROJECT_DIR/analysis/output/rpf_5p_density/${project}.txcoord_counts.hq.dedup.hdf5";
+TX_INFO_FILE="$BASE_DIR/static/$genome/transcript_data.hdf5"
 
 DIRICORE_DIR="/home/e984a/diricore"
 python_bin="$DIRICORE_DIR/diricore/bin/plot_rpf_transcript_distribution.py";
@@ -32,6 +34,7 @@ done`
 eval $(echo python ${python_bin} \
        	-m ${minreads} \
       	-o $outfile \
+        -t $TX_INFO_FILE \
 	"$sampinfo")
 
 echo "Done. File created: $outfile"
@@ -46,6 +49,7 @@ done`
 eval $(echo python ${python_bin} \
        	-m ${minreads} \
       	-o $outfile \
+        -t $TX_INFO_FILE \
 	"$sampinfo")
 
 echo "Done. File created: $outfile"
@@ -61,6 +65,7 @@ done`
 eval $(echo python ${python_bin} \
        	-m ${minreads} \
       	-o $outfile \
+        -t $TX_INFO_FILE \
 	"$sampinfo")
 
 echo "Done. File created: $outfile"
@@ -76,6 +81,7 @@ done`
 eval $(echo python ${python_bin} \
        	-m ${minreads} \
       	-o $outfile \
+        -t $TX_INFO_FILE \
 	"$sampinfo")
 
 echo "Done. File created: $outfile"

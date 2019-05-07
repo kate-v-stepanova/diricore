@@ -17,7 +17,6 @@ import seaborn
 from matplotlib import pyplot
 
 
-DEFAULT_TXINFOFN = "./staticdata/human/transcript_data.hdf5"
 DEFAULT_NGRID = 2000
 DEFAULT_MINREADS = 100
 
@@ -152,8 +151,7 @@ def main():
     ap = argparse.ArgumentParser(description="")
     ap.add_argument('-m', '--minreads', required=False, default=DEFAULT_MINREADS, type=int)
     ap.add_argument('-o', '--outfile', required=True)
-    ap.add_argument('-t', '--txinfofile', required=False, default=DEFAULT_TXINFOFN)
-    #ap.add_argument(dest="sampleinfofile", metavar="SAMPLEINFOFILE", nargs=1)
+    ap.add_argument('-t', '--txinfofile', required=True)
     ap.add_argument(dest="sampleinfos", metavar="SAMPLEINFO", nargs="*")
 
     args = ap.parse_args()
