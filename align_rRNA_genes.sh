@@ -6,9 +6,14 @@ DIRICORE_PATH="/home/e984a/diricore"
 blat_path="$DIRICORE_PATH/programs/blat_for_linux"
 BASE_PATH="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_PATH="$BASE_PATH/$project_id"
-# GENOME_PATH="$BASE_PATH/static/hg19/hg19.2bit"
 PSL_PARSER="$DIRICORE_PATH/utils/parse_psl.py"
-GENOME_PATH="$BASE_PATH/static/hg19/rRNA_genes.2bit"
+
+genome="hg19"
+if [[ $# -ge 3 ]]; then
+   genome=$3
+fi
+
+GENOME_PATH="$BASE_PATH/static/$genome/rRNA_genes.2bit"
 
 
 trna=0
