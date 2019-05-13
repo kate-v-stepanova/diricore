@@ -5,9 +5,11 @@ import os
 import glob
 import pandas as pd
 
+# changed since 14824 project
+
 if len(sys.argv) <= 2:
     print("project_id is missing! ")
-    print("Usage {} 14464 trna/rrna".format(sys.argv[0]))
+    print("Usage {} 14464 trna/rrna [hg19]".format(sys.argv[0]))
     exit(1)
 
 project_id = sys.argv[1]
@@ -19,12 +21,15 @@ else:
     trna = False
     prefix = "rRNA"
 
+genome = "hg19"
+if len(sys.argv) >= 4:
+    genome = sys.argv[3].strip()
 
 BASE_DIR = "/icgc/dkfzlsdf/analysis/OE0532"
 DIRICORE_PATH = "/home/e984a/diricore"
 
 project_dir = os.path.join(BASE_DIR, project_id)
-rrna_genes_file = os.path.join(DIRICORE_PATH, "staticdata/human/{}_genes.txt".format(prefix))
+rrna_genes_file = os.path.join(BASE_DIR, "static/{}/{}_genes.txt".format(genome, prefix))
 
 if trna:
     input_dir = os.path.join(project_dir, "analysis/output/trna_fragments")
@@ -57,7 +62,8 @@ for infile in blat_results:
         #gene_name = row.get('gene_name')
         # now we extract from df only the hits which belong to this gene
         # we check that the start and end position of the hit is between start and end position of the gene
-        gene_df = df.loc[(df.get('chrom') == gene.get('chrom')) & (df.get('start') >= gene.get('start')) & (df.get('end') <= gene.get('end'))]
+#        gene_df = df.loc[(df.get('chrom') == gene.get('chrom')) & (df.get('start') >= gene.get('start')) & (df.get('end') <= gene.get('end'))]
+        gene_df = df.loc[df.get('chrom') == gene.get('fasta_id')]
         # now we can remove duplicates. Assuming there is no overlap betweeen the regions of rRNA genes, we can safely remove the duplicates so that each sequence will only be counted once
         gene_df = gene_df.drop_duplicates(subset="counts_sequence", keep="first")
         gene_name = gene.get('gene_name')
