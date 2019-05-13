@@ -34,7 +34,6 @@ print(input_dir)
 # these files are manually created from UCSC browser
 blat_results = glob.glob(os.path.join(input_dir, "*.parsed_psl.txt"))
 rrna_genes_df = pd.read_csv(rrna_genes_file, sep="\t")
-chromosomes = rrna_genes_df['chrom'].unique().tolist()
 for infile in blat_results:
     print("Processing ", infile)
     output_file = infile.replace('.parsed_psl.txt', '_reads_per_gene.txt')
@@ -43,14 +42,13 @@ for infile in blat_results:
     df = pd.read_csv(infile, sep=" ", header=None, usecols=[0,6,8,9])
     df.columns = ['counts_sequence', 'chrom', 'start', 'end']
 
-    # filter results (keep only the hits that aligned to chromosomes of rRNA genes)
-    df = df[df.get('chrom').isin(chromosomes)]
-
     # keep only the first hits (the sequences can be aligned to multiple regions, and blat outputs all of them)
     # "counts_sequence" column contains sequence which was aligned and the number of reads which match to this sequence.
     # Since all the duplicated sequences were merged, this column can be used as an identifier
 #    df = df.drop_duplicates(subset="counts_sequence", keep="first")
-
+    if df.empty:
+         print("No data loaded! Skipping sample")
+         continue
     # now I want to separate sequence and the number of reads
     df[['counts', 'sequence']] = df.get('counts_sequence').str.split('_', expand=True)
     result = []
