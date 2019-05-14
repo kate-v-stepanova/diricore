@@ -16,8 +16,8 @@ PROJECT_PATH="$BASE_PATH/$dataset_id"
 INDIR="$PROJECT_PATH/analysis/input/fastq";
 OUTDIR="$PROJECT_PATH/analysis/output/clean";
 
-RRNA_REF="$DIRICORE_PATH/staticdata/${species}/rRNAs";
-TRNA_REF="$DIRICORE_PATH/staticdata/${species}/tRNAs";
+RRNA_REF="$BASE_PATH/static/${species}/rRNAs";
+TRNA_REF="$BASE_PATH/static/${species}/tRNAs";
 
 
 ###
