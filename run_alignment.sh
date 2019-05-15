@@ -20,9 +20,9 @@ OUTDIR="$project_path/analysis/output/tophat_out";
 
 species=$1;
 
-REF="$DIRICORE_PATH/staticdata/${species}/genome";
-GTF="$DIRICORE_PATH/staticdata/${species}/transcripts.gff";
-TIDX="$DIRICORE_PATH/staticdata/${species}/transcripts";
+REF="$BASE_PATH/static/${species}/genome";
+GTF="$BASE_PATH/static/${species}/transcripts.gff";
+TIDX="$BASE_PATH/static/${species}/transcripts";
 
 
 ###
