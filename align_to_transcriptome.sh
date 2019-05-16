@@ -4,6 +4,7 @@ set -e
 set -u
 
 dataset_id=$1
+
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR="$BASE_DIR/$dataset_id"
 INDIR="$PROJECT_DIR/analysis/input/fastq"
@@ -20,12 +21,12 @@ echo "Unzip the fastq files in $INDIR to proceed"
 module load STAR
 mkdir -p $OUTDIR
 
-for f in $(ls ${INDIR}); do
+for f in $(ls ${INDIR}/*.fastq); do
     b=$(basename ${f});
     b=${b%%.*};
     STAR --genomeDir $STAR_GENOME_DIR \
 	--runThreadN 100 \
-	--readFilesIn ${INDIR}/${f} \
+	--readFilesIn ${f} \
 	--outFileNamePrefix $OUTDIR/star_${b}_ \
 	--outSAMtype BAM Unsorted \
         --quantMode TranscriptomeSAM
