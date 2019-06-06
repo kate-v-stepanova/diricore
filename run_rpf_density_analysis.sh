@@ -52,40 +52,44 @@ mkdir -p ${OUTDIR}
 mkdir -p "${PLOTDIR}/rpf_5p_density_plots/"
 
 if [[ $plots_only == 0 ]]; then
-echo "Mapping RPFs to transcripttome coordinates (hq)"
-tmp_file="$OUTDIR/tmp_file.txt"
-rm -f $tmp_file
-touch $tmp_file
-for fn in $(ls ${INDIR}/*.hqmapped.bam); do
-    b=$(basename $fn);
-    b=${b#"star_"};
-    b=${b%%.*};
-    echo -e "${b}\t${fn}" >> $tmp_file
-done;
+  if [[ ! -f $of_hq ]]; then
+    echo "Mapping RPFs to transcripttome coordinates (hq)"
+    tmp_file="$OUTDIR/tmp_file.txt"
+    rm -f $tmp_file
+    touch $tmp_file
+    for fn in $(ls ${INDIR}/*.hqmapped_dedup.bam); do
+        b=$(basename $fn);
+        b=${b#"star_"};
+        b=${b%%.*};
+        echo -e "${b}\t${fn}" >> $tmp_file
+    done;
 
-#$DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
-#   -t "${INDEXDATA_FILE}" \
-#   -o "${of_hq}" \
-#   -b $tmp_file
+    $DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
+       -t "${INDEXDATA_FILE}" \
+       -o "${of_hq}" \
+       -b $tmp_file
 
-echo "Mapping done. Created file: $of_hq"
+    echo "Mapping done. Created file: $of_hq"
+  fi
+  
+  if [[ ! -f $of_all ]]; then
+    echo "Mapping RPFs to transcripttome coordinates (all)"
 
-rm -f $tmp_file
-touch $tmp_file
-for fn in $(ls ${INDIR}/*.bam | grep -v "hqmapped"); do
-    b=${b#"star_"};
-    b=${b%%.*};
-    echo -e "${b}\t${fn}" >> $tmp_file
-done;
+    rm -f $tmp_file
+    touch $tmp_file
+    for fn in $(ls ${INDIR}/*_dedup.bam | grep -v "hqmapped"); do
+        b=${b#"star_"};
+        b=${b%%.*};
+        echo -e "${b}\t${fn}" >> $tmp_file
+    done;
 
-echo "Mapping RPFs to transcripttome coordinates (all)"
-$DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
-   -t "${INDEXDATA_FILE}" \
-   -o "${of_all}" \
-   -b $tmp_file
-echo "Mapping done. Created file: $of_all"
-rm -f $tmp_file
-
+    $DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
+       -t "${INDEXDATA_FILE}" \
+       -o "${of_all}" \
+       -b $tmp_file
+    echo "Mapping done. Created file: $of_all"
+    rm -f $tmp_file
+  fi
 fi
 
 output="\
@@ -113,10 +117,10 @@ Val\tGTA,GTC,GTG,GTT
 
 # RPF density at special codons
 # (START/other ATG)
-
-echo "Generating RPF density shift plots (hq)"
-mkdir -p $PLOTDIR/rpf_5p_density_plots/hq_with_dup
-echo -ne "$output" | while read aa codongroupstr; do
+if [[ -f $of_hq ]]; then
+  echo "Generating RPF density shift plots (hq)"
+  mkdir -p $PLOTDIR/rpf_5p_density_plots/hq_with_dup
+  echo -ne "$output" | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/hq_with_dup/${projectname}.hq.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
 
@@ -129,15 +133,14 @@ echo -ne "$output" | while read aa codongroupstr; do
         ${MAPS_FILE} \
         ${codons}
     echo "Shift plots done (hq). Created file: $of"
-done
+  done
 
-
-# RPF density at special codons
-# (START/other ATG)
-echo "RPF density at special codons (hq)"
-echo -ne "\
-ATG_split\tSTART_ATG,Other_ATG
-" | while read aa codongroupstr; do
+  # RPF density at special codons
+  # (START/other ATG)
+  echo "RPF density at special codons (hq)"
+  echo -ne "\
+  ATG_split\tSTART_ATG,Other_ATG
+  " | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/hq_with_dup/${projectname}.hq.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
 
@@ -150,12 +153,15 @@ ATG_split\tSTART_ATG,Other_ATG
         ${MAPSSTART_FILE} \
         ${codons}
     echo "Special codons done (hq). Created file: $of"
-done
+  done
+else
+  echo "File is missing! Skipping: $of_hq"
+fi
 
-
-echo "Generating RPF density shift plots (all)"
-mkdir -p $PLOTDIR/rpf_5p_density_plots/all_with_dup
-echo -ne "$output" | while read aa codongroupstr; do
+if [[ -f $of_all ]]; then
+  echo "Generating RPF density shift plots (all)"
+  mkdir -p $PLOTDIR/rpf_5p_density_plots/all_with_dup
+  echo -ne "$output" | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/all_with_dup/${projectname}.all.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
 
@@ -167,15 +173,15 @@ echo -ne "$output" | while read aa codongroupstr; do
         "${of_all}" \
         ${MAPS_FILE} \
         ${codons}
-echo "Shift plots done (all). Created file: $of"
-done
+    echo "Shift plots done (all). Created file: $of"
+  done
 
 
-# RPF density at special codons
-# (START/other ATG)
-echo "RPF density at special codons (all)"
-echo -ne "\
-ATG_split\tSTART_ATG,Other_ATG
+  # RPF density at special codons
+  # (START/other ATG)
+  echo "RPF density at special codons (all)"
+  echo -ne "\
+  ATG_split\tSTART_ATG,Other_ATG
 " | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/all_with_dup/${projectname}.all.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
@@ -189,5 +195,5 @@ ATG_split\tSTART_ATG,Other_ATG
         ${MAPSSTART_FILE} \
         ${codons}
     echo "Special codons done (all). Created file: $of"
-done
-
+  done
+fi

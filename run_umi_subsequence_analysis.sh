@@ -30,19 +30,18 @@ BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR="$BASE_DIR/$dataset_id"
 
 OUTDIR="$PROJECT_DIR/analysis/output/subsequence_data";
-INDIR="$PROJECT_DIR/analysis/output/tophat_out";
+#INDIR="$PROJECT_DIR/analysis/output/tophat_out";
+INDIR="$PROJECT_DIR/analysis/output/alignments/toGenome"
 PLOTDIR="$PROJECT_DIR/analysis/output/figures";
 CONTRASTS="$PROJECT_DIR/analysis/input/metadata/rpf_density_contrasts.tsv";
-#CONTRASTS="$PROJECT_DIR/analysis/input/metadata/subsequence_contrasts.tsv";
 SAMPLENAMES="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv"
-# SAMPLENAMES="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv"
 DIRICORE_DIR="/home/e984a/diricore"
-INDEXDATAFN="$DIRICORE_DIR/staticdata/${species}/subseq_index_data.pkl.gz";
+INDEXDATAFN="$BASE_DIR/static/${species}/subseq_index_data.pkl.gz";
 
-frame_file="${OUTDIR}/${projectname}.subsequence_data.frame0.hdf5"
-dedup_frame_file="${OUTDIR}/${projectname}.subsequence_data.frame0.dedup.hdf5"
-hq_frame_file="${OUTDIR}/${projectname}.subsequence_data.frame0.hq.hdf5"
-hq_dedup_frame_file="${OUTDIR}/${projectname}.subsequence_data.frame0.hq.dedup.hdf5"
+frame_file="${OUTDIR}/${projectname}.subsequence_data.all.${minreads}.hdf5"
+dedup_frame_file="${OUTDIR}/${projectname}.subsequence_data.all.dedup.${minreads}.hdf5"
+hq_frame_file="${OUTDIR}/${projectname}.subsequence_data.hq.${minreads}.hdf5"
+hq_dedup_frame_file="${OUTDIR}/${projectname}.subsequence_data.hq.dedup.${minreads}.hdf5"
 
 
 ###
@@ -55,12 +54,10 @@ if [[ $plots_only -eq 0 ]]; then
     rm -f $hq_frame_file
     rm -f $dedup_frame_file
     rm -f $hq_dedup_frame_file
-    echo "Extracting HQ subsequences"
-    ls -1 ${INDIR}/*/accepted_hits.hqmapped_dedup.bam | sort -V | while read bamfn; do
-        b=$(basename $(dirname "$bamfn"));
-        b=${b%%.*};
-        b=${b#"dem_"};
-        b=${b%"_umi_extracted"};
+    echo "Extracting HQ dedup subsequences"
+    ls -1 ${INDIR}/*_toGenome.hqmapped_dedup.bam | sort -V | while read bamfn; do
+        b=$(basename $bamfn);
+        b=${b%"_toGenome.hqmapped_dedup.bam"};
        $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
            -v \
            run \
@@ -69,14 +66,12 @@ if [[ $plots_only -eq 0 ]]; then
            ${INDEXDATAFN} \
            ${b},${bamfn}
     done
-    echo "Done. Generated file: ${hq_frame_file}"
+    echo "Done. Generated file: ${hq_dedup_frame_file}"
 
-    echo "Extracting HQ unique subsequences"
-    ls -1 ${INDIR}/*/accepted_hits.hqmapped_dedup.bam | sort -V | while read bamfn; do
-        b=$(basename $(dirname "$bamfn"));
-        b=${b%%.*};
-        b=${b#"dem_"};
-        b=${b%"_umi_extracted"};
+    echo "Extracting HQ subsequences"
+    ls -1 ${INDIR}/*_toGenome.hqmapped.bam | sort -V | while read bamfn; do
+        b=$(basename "$bamfn");
+        b=${b%"_toGenome.hqmapped.bam"};
        $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
            -v \
            run \
@@ -85,15 +80,13 @@ if [[ $plots_only -eq 0 ]]; then
            ${INDEXDATAFN} \
            ${b},${bamfn}
     done
-    echo "Done. Generated file: ${hq_dedup_frame_file}"
+    echo "Done. Generated file: ${hq_frame_file}"
 
 
     echo "Extracting all subsequences"
-    ls -1 ${INDIR}/*/accepted_hits.bam | sort -V | while read bamfn; do
-        b=$(basename $(dirname "$bamfn"));
-        b=${b%%.*};
-        b=${b#"dem_"};
-        b=${b%"_umi_extracted"};
+    ls -1 ${INDIR}/*_toGenome.bam | sort -V | while read bamfn; do
+        b=$(basename "$bamfn");
+        b=${b%"_toGenome.bam"};
         $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
            -v \
            run \
@@ -106,11 +99,9 @@ if [[ $plots_only -eq 0 ]]; then
     echo "Done. Generated file: ${frame_file}"
 
     echo "Extracting all unique subsequences"
-    ls -1 ${INDIR}/*/accepted_hits.bam | sort -V | while read bamfn; do
-        b=$(basename $(dirname "$bamfn"));
-        b=${b%%.*};
-        b=${b#"dem_"};
-        b=${b%"_umi_extracted"};
+    ls -1 ${INDIR}/*_toGenome_dedup.bam | sort -V | while read bamfn; do
+        b=$(basename $bamfn);
+        b=${b%"_toGenome_dedup.bam"};
         $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
            -v \
            run \

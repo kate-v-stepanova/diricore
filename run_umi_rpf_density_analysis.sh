@@ -8,7 +8,8 @@ BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR="$BASE_DIR/$dataset_id"
 
 OUTDIR="$PROJECT_DIR/analysis/output/rpf_5p_density";
-INDIR="$PROJECT_DIR/analysis/output/tophat_out";
+#INDIR="$PROJECT_DIR/analysis/output/tophat_out";
+INDIR="$PROJECT_DIR/analysis/output/alignments/toGenome"
 PLOTDIR="$PROJECT_DIR/analysis/output/figures";
 SAMPLENAME_FILE="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv";
 CONTRAST_FILE="$PROJECT_DIR/analysis/input/metadata/rpf_density_contrasts.tsv";
@@ -31,9 +32,9 @@ if [[ $# -ge 4 ]]; then
 fi
 
 DIRICORE_DIR="/home/e984a/diricore"
-INDEXDATA_FILE="$DIRICORE_DIR/staticdata/${species}/transcript_data.hdf5";
-MAPS_FILE="$DIRICORE_DIR/staticdata/${species}/codon_regions.width_61.hdf5";
-MAPSSTART_FILE="$DIRICORE_DIR/staticdata/${species}/codon_regions.START_Other_ATG.width_61.hdf5";
+INDEXDATA_FILE="$BASE_DIR/static/${species}/transcript_data.hdf5";
+MAPS_FILE="$BASE_DIR/static/${species}/codon_regions.width_61.hdf5";
+MAPSSTART_FILE="$BASE_DIR/static/${species}/codon_regions.START_Other_ATG.width_61.hdf5";
 
 # Checking that files are present
 ls $INDEXDATA_FILE
@@ -42,10 +43,10 @@ ls $MAPSSTART_FILE
 
 ###
 # { setup
-of_hq_unique="${OUTDIR}/${projectname}.txcoord_counts.hq.dedup.hdf5";
-of_hq="${OUTDIR}/${projectname}.txcoord_counts.hq.hdf5";
-of_all_unique="${OUTDIR}/${projectname}.txcoord_counts.all.dedup.hdf5";
-of_all="${OUTDIR}/${projectname}.txcoord_counts.all.hdf5";
+of_hq_unique="${OUTDIR}/${projectname}.txcoord_counts.hq.dedup.${minreads}.hdf5";
+of_hq="${OUTDIR}/${projectname}.txcoord_counts.hq.${minreads}.hdf5";
+of_all_unique="${OUTDIR}/${projectname}.txcoord_counts.all.dedup.${minreads}.hdf5";
+of_all="${OUTDIR}/${projectname}.txcoord_counts.all.${minreads}.hdf5";
 
 
 mkdir -p ${OUTDIR}
@@ -58,11 +59,9 @@ $DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
    -t "${INDEXDATA_FILE}" \
    -o "${of_hq_unique}" \
    -b <(\
-        ls -1 ${INDIR}/*/accepted_hits.hqmapped_dedup.bam | sort -V | while read fn; do
-               b=$(basename $(dirname "$fn"));
-               b=${b%%.*};
-               b=${b#"dem_"};
-               b=${b%"_umi_extracted"};
+        ls -1 ${INDIR}/*.hqmapped_dedup.bam | sort -V | while read fn; do
+               b=$(basename "$fn");
+               b=${b%"_toGenome.hqmapped_dedup.bam"};
                echo -e "${b}\t${fn}";
            done \
        )
@@ -73,11 +72,9 @@ $DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
    -t "${INDEXDATA_FILE}" \
    -o "${of_hq}" \
    -b <(\
-        ls -1 ${INDIR}/*/accepted_hits.hqmapped.bam | sort -V | while read fn; do
-               b=$(basename $(dirname "$fn"));
-               b=${b%%.*};
-               b=${b#"dem_"};
-               b=${b%"_umi_extracted"};
+        ls -1 ${INDIR}/*.hqmapped.bam | sort -V | while read fn; do
+               b=$(basename "$fn");
+               b=${b%"_toGenome.hqmapped.bam"};
                echo -e "${b}\t${fn}";
            done \
        )
@@ -88,11 +85,9 @@ $DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
    -t "${INDEXDATA_FILE}" \
    -o "${of_all}" \
    -b <(\
-        ls -1 ${INDIR}/*/accepted_hits.bam | sort -V | while read fn; do
-               b=$(basename $(dirname "$fn"));
-               b=${b%%.*};
-               b=${b#"dem_"};
-               b=${b%"_umi_extracted"};
+        ls -1 ${INDIR}/*toGenome.bam | sort -V | while read fn; do
+               b=$(basename "$fn");
+               b=${b%"_toGenome.bam"};
                echo -e "${b}\t${fn}";
            done \
        )
@@ -103,11 +98,9 @@ $DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
    -t "${INDEXDATA_FILE}" \
    -o "${of_all_unique}" \
    -b <(\
-        ls -1 ${INDIR}/*/accepted_hits_dedup.bam | sort -V | while read fn; do
-               b=$(basename $(dirname "$fn"));
-               b=${b%%.*};
-               b=${b#"dem_"};
-               b=${b%"_umi_extracted"};
+        ls -1 ${INDIR}/*toGenome_dedup.bam | sort -V | while read fn; do
+               b=$(basename "$fn");
+               b=${b%"_toGenome_dedup.bam"};
                echo -e "${b}\t${fn}";
            done \
        )
@@ -140,6 +133,7 @@ echo "Generating RPF density shift plots (hq, unique)"
 mkdir -p ${PLOTDIR}/rpf_5p_density_plots/hq_unique
 echo -ne "$output" | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/hq_unique/${projectname}.hq.unique.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
+    if [[ ! -f $of ]]; then
     codons=$(echo $codongroupstr | sed 's/,/ /g');
 
     python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
@@ -151,6 +145,7 @@ echo -ne "$output" | while read aa codongroupstr; do
         ${MAPS_FILE} \
         ${codons}
     echo "Shift plots done (hq, unique). Created file: $of"
+   fi
 done
 
 
@@ -161,8 +156,8 @@ echo -ne "\
 ATG_split\tSTART_ATG,Other_ATG
 " | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/hq_unique/${projectname}.hq.unique.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
+    if [[ ! -f $of ]]; then
     codons=$(echo $codongroupstr | sed 's/,/ /g');
-
     python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
@@ -172,6 +167,7 @@ ATG_split\tSTART_ATG,Other_ATG
         ${MAPSSTART_FILE} \
         ${codons}
     echo "Special codons done (hq, unique). Created file: $of"
+    fi
 done
 
 
@@ -180,7 +176,7 @@ mkdir -p $PLOTDIR/rpf_5p_density_plots/hq_with_dup
 echo -ne "$output" | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/hq_with_dup/${projectname}.hq.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
-
+    if [[ ! -f $of ]]; then
     python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
@@ -190,6 +186,7 @@ echo -ne "$output" | while read aa codongroupstr; do
         ${MAPS_FILE} \
         ${codons}
     echo "Shift plots done (hq). Created file: $of"
+   fi
 done
 
 
@@ -201,7 +198,7 @@ ATG_split\tSTART_ATG,Other_ATG
 " | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/hq_with_dup/${projectname}.hq.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
-
+    if [[ ! -f $of ]]; then
     python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
@@ -211,6 +208,7 @@ ATG_split\tSTART_ATG,Other_ATG
         ${MAPSSTART_FILE} \
         ${codons}
     echo "Special codons done (hq). Created file: $of"
+    fi
 done
 
 
@@ -219,7 +217,7 @@ mkdir -p $PLOTDIR/rpf_5p_density_plots/all_with_dup
 echo -ne "$output" | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/all_with_dup/${projectname}.all.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
-
+    if [[ ! -f $of ]]; then
     python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
@@ -228,7 +226,9 @@ echo -ne "$output" | while read aa codongroupstr; do
         "${of_all}" \
         ${MAPS_FILE} \
         ${codons}
-echo "Shift plots done (all). Created file: $of"
+    echo "Shift plots done (all). Created file: $of"
+    fi
+
 done
 
 
@@ -240,7 +240,7 @@ ATG_split\tSTART_ATG,Other_ATG
 " | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/all_with_dup/${projectname}.all.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
-
+    if [[ ! -f $of ]]; then
     python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
@@ -250,6 +250,7 @@ ATG_split\tSTART_ATG,Other_ATG
         ${MAPSSTART_FILE} \
         ${codons}
     echo "Special codons done (all). Created file: $of"
+    fi
 done
 
 
@@ -258,7 +259,7 @@ mkdir -p $PLOTDIR/rpf_5p_density_plots/all_unique
 echo -ne "$output" | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/all_unique/${projectname}.all.unique.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
-
+    if [[ ! -f $of ]]; then
     python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
@@ -268,6 +269,7 @@ echo -ne "$output" | while read aa codongroupstr; do
         ${MAPS_FILE} \
         ${codons}
     echo "Shift plots done (all, unique). Created file: $of"
+    fi
 done
 
 # RPF density at special codons
@@ -278,7 +280,7 @@ ATG_split\tSTART_ATG,Other_ATG
 " | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/all_unique/${projectname}.all.unique.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
     codons=$(echo $codongroupstr | sed 's/,/ /g');
-
+    if [[ ! -f $of ]]; then
     python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
         -c "${CONTRAST_FILE}" \
         -n "${SAMPLENAME_FILE}" \
@@ -288,4 +290,5 @@ ATG_split\tSTART_ATG,Other_ATG
         ${MAPSSTART_FILE} \
         ${codons}
     echo "Special codons done (all, unique). Created file: $of"
+   fi
 done

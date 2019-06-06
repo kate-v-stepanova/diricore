@@ -9,8 +9,8 @@ PROJECT_DIR="$BASE_DIR/$dataset_id"
 metafile="$PROJECT_DIR/analysis/input/metadata/rpf_density_samplenames.tsv"
 
 project=$dataset_id
-minreads=${2};
-genome=$3
+minreads=$3;
+genome=$2
 
 OUTDIR="$PROJECT_DIR/analysis/output/figures/rpf_transcript_distribution";
 TX_ALL="$PROJECT_DIR/analysis/output/rpf_5p_density/${project}.txcoord_counts.all.${minreads}.hdf5";
@@ -25,6 +25,7 @@ python_bin="$DIRICORE_DIR/diricore/bin/plot_rpf_transcript_distribution.py";
 mkdir -p ${OUTDIR}
 
 if [[ -f $TX_ALL ]]; then
+  echo "Processing $TX_ALL"
   outfile="${OUTDIR}/all.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
   sampinfo=`cat $metafile | while read -a LINE
   do
@@ -43,6 +44,7 @@ else
 fi
 
 if [[ -f $TX_ALL_DEDUP ]]; then
+  echo "Processing $TX_ALL_DEDUP"
   outfile="${OUTDIR}/all.dedup.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
   sampinfo=`cat $metafile | while read -a LINE
   do
@@ -61,6 +63,7 @@ else
 fi
 
 if [[ -f $TX_HQ ]]; then
+  echo "Processing $TX_HQ"
   outfile="${OUTDIR}/hq.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
   sampinfo=`cat $metafile | while read -a LINE
   do
@@ -79,6 +82,7 @@ else
 fi
 
 if [[ -f $TX_HQ_DEDUP ]]; then
+  echo "Processing $TX_HQ_DEDUP"
   outfile="${OUTDIR}/hq.dedup.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
   sampinfo=`cat $metafile | while read -a LINE
   do
