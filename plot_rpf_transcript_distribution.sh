@@ -24,45 +24,45 @@ python_bin="$DIRICORE_DIR/diricore/bin/plot_rpf_transcript_distribution.py";
 
 mkdir -p ${OUTDIR}
 
-if [[ -f $TX_ALL ]]; then
-  echo "Processing $TX_ALL"
-  outfile="${OUTDIR}/all.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
-  sampinfo=`cat $metafile | while read -a LINE
-  do
-	echo -n "'${LINE[0]},${TX_ALL},${LINE[1]},${LINE[2]}' "
-  done`
+#if [[ -f $TX_ALL ]]; then
+#  echo "Processing $TX_ALL"
+#  outfile="${OUTDIR}/all.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
+#  sampinfo=`cat $metafile | while read -a LINE
+#  do
+#	echo -n "'${LINE[0]},${TX_ALL},${LINE[1]},${LINE[2]}' "
+#  done`
+#
+#  eval $(echo python ${python_bin} \
+#       	-m ${minreads} \
+#      	-o $outfile \
+#        -t $TX_INFO_FILE \
+#	"$sampinfo")
+#
+#  echo "Done. File created: $outfile"
+#else
+#  echo "$TX_ALL does not exist. Skipping"
+#fi
+#
+#if [[ -f $TX_ALL_DEDUP ]]; then
+#  echo "Processing $TX_ALL_DEDUP"
+#  outfile="${OUTDIR}/all.dedup.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
+#  sampinfo=`cat $metafile | while read -a LINE
+#  do
+#	echo -n "'${LINE[0]},${TX_ALL_DEDUP},${LINE[1]},${LINE[2]}' "
+#  done`
+#
+#  eval $(echo python ${python_bin} \
+#       	-m ${minreads} \
+#      	-o $outfile \
+#        -t $TX_INFO_FILE \
+#	"$sampinfo")
+#
+#  echo "Done. File created: $outfile"
+#else
+#  echo "$TX_ALL_DEDUP does not exist. Skipping"
+#fi
 
-  eval $(echo python ${python_bin} \
-       	-m ${minreads} \
-      	-o $outfile \
-        -t $TX_INFO_FILE \
-	"$sampinfo")
-
-  echo "Done. File created: $outfile"
-else
-  echo "$TX_ALL does not exist. Skipping"
-fi
-
-if [[ -f $TX_ALL_DEDUP ]]; then
-  echo "Processing $TX_ALL_DEDUP"
-  outfile="${OUTDIR}/all.dedup.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
-  sampinfo=`cat $metafile | while read -a LINE
-  do
-	echo -n "'${LINE[0]},${TX_ALL_DEDUP},${LINE[1]},${LINE[2]}' "
-  done`
-
-  eval $(echo python ${python_bin} \
-       	-m ${minreads} \
-      	-o $outfile \
-        -t $TX_INFO_FILE \
-	"$sampinfo")
-
-  echo "Done. File created: $outfile"
-else
-  echo "$TX_ALL_DEDUP does not exist. Skipping"
-fi
-
-if [[ -f $TX_HQ ]]; then
+if [[ ! -f $TX_HQ_DEDUP && -f $TX_HQ ]]; then
   echo "Processing $TX_HQ"
   outfile="${OUTDIR}/hq.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
   sampinfo=`cat $metafile | while read -a LINE

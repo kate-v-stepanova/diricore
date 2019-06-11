@@ -68,70 +68,70 @@ if [[ $plots_only -eq 0 ]]; then
     done
     echo "Done. Generated file: ${hq_dedup_frame_file}"
 
-    echo "Extracting HQ subsequences"
-    ls -1 ${INDIR}/*_toGenome.hqmapped.bam | sort -V | while read bamfn; do
-        b=$(basename "$bamfn");
-        b=${b%"_toGenome.hqmapped.bam"};
-       $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
-           -v \
-           run \
-           -o $hq_dedup_frame_file \
-           -f 0 \
-           ${INDEXDATAFN} \
-           ${b},${bamfn}
-    done
-    echo "Done. Generated file: ${hq_frame_file}"
+#    echo "Extracting HQ subsequences"
+#    ls -1 ${INDIR}/*_toGenome.hqmapped.bam | sort -V | while read bamfn; do
+#        b=$(basename "$bamfn");
+#        b=${b%"_toGenome.hqmapped.bam"};
+#       $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
+#           -v \
+#           run \
+#           -o $hq_dedup_frame_file \
+#           -f 0 \
+#           ${INDEXDATAFN} \
+#           ${b},${bamfn}
+#    done
+#    echo "Done. Generated file: ${hq_frame_file}"
 
 
-    echo "Extracting all subsequences"
-    ls -1 ${INDIR}/*_toGenome.bam | sort -V | while read bamfn; do
-        b=$(basename "$bamfn");
-        b=${b%"_toGenome.bam"};
-        $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
-           -v \
-           run \
-           -o ${frame_file} \
-           -f 0 \
-           ${INDEXDATAFN} \
-           ${b},${bamfn} \
-       ;
-    done
-    echo "Done. Generated file: ${frame_file}"
+#    echo "Extracting all subsequences"
+#    ls -1 ${INDIR}/*_toGenome.bam | sort -V | while read bamfn; do
+#        b=$(basename "$bamfn");
+#        b=${b%"_toGenome.bam"};
+#        $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
+#           -v \
+#           run \
+#           -o ${frame_file} \
+#           -f 0 \
+#           ${INDEXDATAFN} \
+#           ${b},${bamfn} \
+#       ;
+#    done
+#    echo "Done. Generated file: ${frame_file}"
 
-    echo "Extracting all unique subsequences"
-    ls -1 ${INDIR}/*_toGenome_dedup.bam | sort -V | while read bamfn; do
-        b=$(basename $bamfn);
-        b=${b%"_toGenome_dedup.bam"};
-        $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
-           -v \
-           run \
-           -o ${dedup_frame_file} \
-           -f 0 \
-           ${INDEXDATAFN} \
-           ${b},${bamfn} \
-       ;
-    done
-    echo "Done. Generated file: ${dedup_frame_file}"
-fi
+#    echo "Extracting all unique subsequences"
+#    ls -1 ${INDIR}/*_toGenome_dedup.bam | sort -V | while read bamfn; do
+#        b=$(basename $bamfn);
+#        b=${b%"_toGenome_dedup.bam"};
+#        $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
+#           -v \
+#           run \
+#           -o ${dedup_frame_file} \
+#           -f 0 \
+#           ${INDEXDATAFN} \
+#           ${b},${bamfn} \
+#       ;
+#    done
+#    echo "Done. Generated file: ${dedup_frame_file}"
+#fi
 
-echo "Creating HQ plots"
-if [[ -f $hq_frame_file ]]; then
-# create subsequence shift plots
-mkdir -p ${PLOTDIR}/subsequence_shift_plots/hq
-$DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
-    -o ${PLOTDIR}/subsequence_shift_plots/hq/${projectname}.hq.m${minreads}. \
-    -m $minreads \
-    --sample-names ${SAMPLENAMES} \
-    --contrasts ${CONTRASTS} \
-    --y-limits ${y_limits} \
-    ${hq_frame_file}
-echo "Created plots in ${PLOTDIR}/subsequence_shift_plots"
-else
- echo "ERROR: file $hq_frame_file not found!! Skipping"
-fi
+#echo "Creating HQ plots"
+#if [[ -f $hq_frame_file ]]; then
+## create subsequence shift plots
+#mkdir -p ${PLOTDIR}/subsequence_shift_plots/hq
+#$DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
+#    -o ${PLOTDIR}/subsequence_shift_plots/hq/${projectname}.hq.m${minreads}. \
+#    -m $minreads \
+#    --sample-names ${SAMPLENAMES} \
+#    --contrasts ${CONTRASTS} \
+#    --y-limits ${y_limits} \
+#    ${hq_frame_file}
+#echo "Created plots in ${PLOTDIR}/subsequence_shift_plots"
+#else
+# echo "ERROR: file $hq_frame_file not found!! Skipping"
+#fi
 ###
-echo "Creating HQ unique plots"
 if [[ -f $hq_dedup_frame_file ]]; then
+  echo "Creating HQ unique plots"
   mkdir -p ${PLOTDIR}/subsequence_shift_plots/hq_unique
   $DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
     -o ${PLOTDIR}/subsequence_shift_plots/hq_unique/${projectname}.hq.unique.m${minreads}. \
@@ -145,34 +145,34 @@ else
   echo "ERROR! File $hq_dedup_frame_file not found. Skipping"
 fi
 
-if [[ -f $frame_file ]]; then
-  mkdir -p ${PLOTDIR}/subsequence_shift_plots/all
-  echo "Creating ALL plots"
-  # create subsequence shift plots
-  $DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
-    -o ${PLOTDIR}/subsequence_shift_plots/all/${projectname}.all.m${minreads}. \
-    -m $minreads \
-    --sample-names ${SAMPLENAMES} \
-    --contrasts ${CONTRASTS} \
-    --y-limits ${y_limits} \
-    ${frame_file}
-  echo "Created plots in ${PLOTDIR}/subsequence_shift_plots"
-else
-    echo "ERROR! File $frame_file not found. Skipping"
-fi
+#if [[ -f $frame_file ]]; then
+#  mkdir -p ${PLOTDIR}/subsequence_shift_plots/all
+#  echo "Creating ALL plots"
+#  # create subsequence shift plots
+#  $DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
+#    -o ${PLOTDIR}/subsequence_shift_plots/all/${projectname}.all.m${minreads}. \
+#    -m $minreads \
+#    --sample-names ${SAMPLENAMES} \
+#    --contrasts ${CONTRASTS} \
+#    --y-limits ${y_limits} \
+#    ${frame_file}
+#  echo "Created plots in ${PLOTDIR}/subsequence_shift_plots"
+#else
+#    echo "ERROR! File $frame_file not found. Skipping"
+#fi
 
-if [[ -f $dedup_frame_file ]]; then
-    mkdir -p ${PLOTDIR}/subsequence_shift_plots/all_unique
-    echo "Creating ALL unique plots"
-    # create subsequence shift plots
-    $DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
-    -o ${PLOTDIR}/subsequence_shift_plots/all_unique/${projectname}.all.unique.m${minreads}. \
-    -m $minreads \
-    --sample-names ${SAMPLENAMES} \
-    --contrasts ${CONTRASTS} \
-    --y-limits ${y_limits} \
-    ${dedup_frame_file}
-    echo "Created plots in ${PLOTDIR}/subsequence_shift_plots"
-else
-    echo "ERROR! File $dedup_frame_file not found. Skipping"
-fi
+#if [[ -f $dedup_frame_file ]]; then
+#    mkdir -p ${PLOTDIR}/subsequence_shift_plots/all_unique
+#    echo "Creating ALL unique plots"
+#    # create subsequence shift plots
+#    $DIRICORE_DIR/diricore/bin/plot_subsequence_shifts.py \
+#    -o ${PLOTDIR}/subsequence_shift_plots/all_unique/${projectname}.all.unique.m${minreads}. \
+#    -m $minreads \
+#    --sample-names ${SAMPLENAMES} \
+#    --contrasts ${CONTRASTS} \
+#    --y-limits ${y_limits} \
+#    ${dedup_frame_file}
+#    echo "Created plots in ${PLOTDIR}/subsequence_shift_plots"
+#else
+#    echo "ERROR! File $dedup_frame_file not found. Skipping"
+#fi

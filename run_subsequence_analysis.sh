@@ -65,19 +65,19 @@ if [[ $plots_only == 0 ]]; then
     done
     echo "Done"
 
-    echo "Extracting subsequences (all)"
-    ls -1 ${INDIR}/*_toGenome.bam | sort -V | while read bamfn; do
-        b=$(basename "$bamfn");
-        b=${b%%_toGenome.bam};
-       $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
-           -v \
-           run \
-           -o $of_all \
-           -f 0 \
-           ${INDEXDATAFN} \
-           ${b},${bamfn}
-    done
-    echo "Done"
+#    echo "Extracting subsequences (all)"
+#    ls -1 ${INDIR}/*_toGenome.bam | sort -V | while read bamfn; do
+#        b=$(basename "$bamfn");
+#        b=${b%%_toGenome.bam};
+#       $DIRICORE_DIR/diricore/bin/extract_subsequences.py \
+#           -v \
+#           run \
+#           -o $of_all \
+#           -f 0 \
+#           ${INDEXDATAFN} \
+#           ${b},${bamfn}
+#    done
+#    echo "Done"
 fi
 
 # create subsequence shift plots
@@ -95,17 +95,17 @@ else
   echo "File $of is missing! Skipping"
 fi
 
-if [[ -f $of ]]; then
-  echo "Plotting subsequences (all)"
-  $bin_plot \
-    -o ${PLOTDIR}/subsequence_shift_plots/${projectname}.m${minreads}.all. \
-    -m $minreads \
-    --sample-names ${SAMPLENAME_FILE} \
-    --contrasts ${CONTRAST_FILE} \
-    --y-limits $y_limits \
-    ${of_all}
-  echo "Done. Generated file: ${PLOTDIR}/subsequence_shift_plots/${projectname}.m${minreads}.all."
-else
-  echo "File $of_all is missing! Skipping"
-fi
+#if [[ -f $of ]]; then
+#  echo "Plotting subsequences (all)"
+#  $bin_plot \
+#    -o ${PLOTDIR}/subsequence_shift_plots/${projectname}.m${minreads}.all. \
+#    -m $minreads \
+#    --sample-names ${SAMPLENAME_FILE} \
+#    --contrasts ${CONTRAST_FILE} \
+#    --y-limits $y_limits \
+#    ${of_all}
+#  echo "Done. Generated file: ${PLOTDIR}/subsequence_shift_plots/${projectname}.m${minreads}.all."
+#else
+#  echo "File $of_all is missing! Skipping"
+#fi
 ###

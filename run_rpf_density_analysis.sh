@@ -72,24 +72,24 @@ if [[ $plots_only == 0 ]]; then
     echo "Mapping done. Created file: $of_hq"
   fi
   
-  if [[ ! -f $of_all ]]; then
-    echo "Mapping RPFs to transcripttome coordinates (all)"
+#  if [[ ! -f $of_all ]]; then
+#    echo "Mapping RPFs to transcripttome coordinates (all)"
 
-    rm -f $tmp_file
-    touch $tmp_file
-    for fn in $(ls ${INDIR}/*_dedup.bam | grep -v "hqmapped"); do
-        b=${b#"star_"};
-        b=${b%%.*};
-        echo -e "${b}\t${fn}" >> $tmp_file
-    done;
-
-    $DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
-       -t "${INDEXDATA_FILE}" \
-       -o "${of_all}" \
-       -b $tmp_file
-    echo "Mapping done. Created file: $of_all"
-    rm -f $tmp_file
-  fi
+#    rm -f $tmp_file
+#    touch $tmp_file
+#    for fn in $(ls ${INDIR}/*_dedup.bam | grep -v "hqmapped"); do
+#        b=${b#"star_"};
+#        b=${b%%.*};
+#        echo -e "${b}\t${fn}" >> $tmp_file
+#    done;
+#
+#    $DIRICORE_DIR/diricore/bin/map_rpfs_to_transcriptome_positions.py \
+#       -t "${INDEXDATA_FILE}" \
+#       -o "${of_all}" \
+#       -b $tmp_file
+#    echo "Mapping done. Created file: $of_all"
+#    rm -f $tmp_file
+#  fi
 fi
 
 output="\
@@ -119,6 +119,7 @@ Val\tGTA,GTC,GTG,GTT
 # (START/other ATG)
 if [[ -f $of_hq ]]; then
   echo "Generating RPF density shift plots (hq)"
+  echo "Data file: $of_hq"
   mkdir -p $PLOTDIR/rpf_5p_density_plots/hq_with_dup
   echo -ne "$output" | while read aa codongroupstr; do
     of="${PLOTDIR}/rpf_5p_density_plots/hq_with_dup/${projectname}.hq.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
@@ -158,42 +159,43 @@ else
   echo "File is missing! Skipping: $of_hq"
 fi
 
-if [[ -f $of_all ]]; then
-  echo "Generating RPF density shift plots (all)"
-  mkdir -p $PLOTDIR/rpf_5p_density_plots/all_with_dup
-  echo -ne "$output" | while read aa codongroupstr; do
-    of="${PLOTDIR}/rpf_5p_density_plots/all_with_dup/${projectname}.all.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
-    codons=$(echo $codongroupstr | sed 's/,/ /g');
+#if [[ -f $of_all ]]; then
+#  echo "Generating RPF density shift plots (all)"
+#  echo "Data file: $of_all"
+#  mkdir -p $PLOTDIR/rpf_5p_density_plots/all_with_dup
+#  echo -ne "$output" | while read aa codongroupstr; do
+#    of="${PLOTDIR}/rpf_5p_density_plots/all_with_dup/${projectname}.all.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
+#    codons=$(echo $codongroupstr | sed 's/,/ /g');
 
-    python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
-        -c "${CONTRAST_FILE}" \
-        -n "${SAMPLENAME_FILE}" \
-        -o "${of}" \
-        -m ${minreads} \
-        "${of_all}" \
-        ${MAPS_FILE} \
-        ${codons}
-    echo "Shift plots done (all). Created file: $of"
-  done
-
-
-  # RPF density at special codons
-  # (START/other ATG)
-  echo "RPF density at special codons (all)"
-  echo -ne "\
-  ATG_split\tSTART_ATG,Other_ATG
-" | while read aa codongroupstr; do
-    of="${PLOTDIR}/rpf_5p_density_plots/all_with_dup/${projectname}.all.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
-    codons=$(echo $codongroupstr | sed 's/,/ /g');
-
-    python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
-        -c "${CONTRAST_FILE}" \
-        -n "${SAMPLENAME_FILE}" \
-        -o "${of}" \
-        -m ${minreads} \
-        "${of_all}" \
-        ${MAPSSTART_FILE} \
-        ${codons}
-    echo "Special codons done (all). Created file: $of"
-  done
-fi
+#    python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
+#        -c "${CONTRAST_FILE}" \
+#        -n "${SAMPLENAME_FILE}" \
+#        -o "${of}" \
+#        -m ${minreads} \
+#        "${of_all}" \
+#        ${MAPS_FILE} \
+#        ${codons}
+#    echo "Shift plots done (all). Created file: $of"
+#  done
+#
+#
+#  # RPF density at special codons
+#  # (START/other ATG)
+#  echo "RPF density at special codons (all)"
+#  echo -ne "\
+#  ATG_split\tSTART_ATG,Other_ATG
+#" | while read aa codongroupstr; do
+#    of="${PLOTDIR}/rpf_5p_density_plots/all_with_dup/${projectname}.all.m${minreads}.${aa}.rpf_5p_density_shift_plot.pdf";
+#    codons=$(echo $codongroupstr | sed 's/,/ /g');
+#
+#    python $DIRICORE_DIR/diricore/bin/plot_rpf_5p_density.py \
+#        -c "${CONTRAST_FILE}" \
+#        -n "${SAMPLENAME_FILE}" \
+#        -o "${of}" \
+#        -m ${minreads} \
+#        "${of_all}" \
+#        ${MAPSSTART_FILE} \
+#        ${codons}
+#    echo "Special codons done (all). Created file: $of"
+#  done
+#fi
