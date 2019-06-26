@@ -20,7 +20,7 @@ fastq_path="$project_path/analysis/input/fastq"
 diricore_path="/home/e984a/diricore"
 
 sample_id=$(basename $merged_file)
-sample_id=${sample_id#".fastq.gz"}
+sample_id=${sample_id%".fastq.gz"}
 trimmed_file="$merged_path/${sample_id}_trimmed.fastq"
 
 bc_file="$project_path/analysis/input/metadata/bc_file.txt"
@@ -57,7 +57,12 @@ for f in $demultiplexed_path/*.fastq; do
 done;
 
 # the result of umi_extract will become input for the next step (preprocessing)
-echo "Moving files to $fastq_path"
-# mv or cp?
-mv $umi_extract_path/*.fastq.gz $fastq_path
+echo "Creating symlinks to $fastq_path"
+# mv or cp?: ln -s!!
+for f in $(ls $umi_extract_path/*fastq.gz); do
+  fn=$(basename $f)
+  fn=${fn%"_umi_extracted.fastq.gz"}
+  fn=${fn#"dem_"}
+  ln -s $f $fastq_path/${fn}.fastq.gz
+done
 echo "Done"
