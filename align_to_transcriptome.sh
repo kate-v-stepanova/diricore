@@ -8,11 +8,10 @@ genome=$2
 
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR="$BASE_DIR/$dataset_id"
-INDIR="$PROJECT_DIR/analysis/input/fastq"
+#INDIR="$PROJECT_DIR/analysis/input/fastq"
+INDIR="$PROJECT_DIR/analysis/output/clean"
 STAR_GENOME_DIR="/icgc/dkfzlsdf/analysis/OE0532/static/$genome"
 OUTDIR=$PROJECT_DIR/analysis/output/alignments
-
-echo "Unzip the fastq files in $INDIR to proceed"
 
 module load STAR
 mkdir -p $OUTDIR
@@ -25,8 +24,8 @@ for f in $(ls ${INDIR}/*.fastq.gz); do
 	--readFilesIn ${f} \
 	--outFileNamePrefix $OUTDIR/star_${b}_ \
 	--outSAMtype BAM Unsorted \
-        --quantMode TranscriptomeSAM \
-        --readFilesCommand zcat
+        --readFilesCommand zcat \
+        --quantMode TranscriptomeSAM GeneCounts
 done;
 
 echo "Sorting bam files"
@@ -39,35 +38,49 @@ for f in $(ls ${OUTDIR}/*.bam); do
     mv $sorted $f
 done;
 
-mkdir -p $OUTDIR/toTranscriptome
+
 mkdir -p $OUTDIR/toGenome
+mkdir -p $OUTDIR/toTranscriptome
+mkdir -p $OUTDIR/reads_per_gene
+mkdir -p $OUTDIR/logs
+
 for f in $(ls ${OUTDIR}/*Aligned.toTranscriptome.out.bam); do
     b=$(basename ${f});
-    b=${b%%_umi_extract*}; # will get a sample name: GFP_IP_RNAse_3X
-    b=${b#*star_dem_};
-    b=${b%%_Aligned.toTranscriptome*}; # will get star_dem_GFP_IP_RNAse_3X_umi_extracted
+    #b=${b%%_umi_extract*}; # will get a sample name: GFP_IP_RNAse_3X
+    b=${b#star_};
+    b=${b%%_Aligned.toTranscriptome.out.bam}; # will get star_dem_GFP_IP_RNAse_3X_umi_extracted
     echo "mv $f ${OUTDIR}/toTranscriptome/${b}_toTranscriptome.bam"
     mv $f ${OUTDIR}/toTranscriptome/${b}_toTranscriptome.bam 
 done;
 
 for f in $(ls ${OUTDIR}/*Aligned.out.bam); do
     b=$(basename $f);
-    b=${b%%_umi_extract*}
-    b=${b#*star_dem_}
+    b=${b#star_}
     b=${b%%_Aligned.out.bam}
     echo "mv $f ${OUTDIR}/toGenome/${b}_toGenome.bam"
     mv $f ${OUTDIR}/toGenome/${b}_toGenome.bam
 done
 
+for f in $(ls $OUTDIR/*ReadsPerGene.out.tab); do
+   fn=$(basename $f);
+   fn=${fn#"star_"};
+   mv $f $OUTDIR/reads_per_gene/$fn
+done
+
+for f in $(ls $OUTDIR/*.tab $OUTDIR/*.out); do
+   fn=$(basename $f);
+   mv $f $OUTDIR/logs/$fn
+done
 echo "Done with alignments; now filtering out non-primary/low-quality alignments (for Transciptome files)";
-# isolate "hqmapped" reads
+
+  # isolate "hqmapped" reads
 ls -1 ${OUTDIR}/toTranscriptome/*toTranscriptome.bam | while read fn; do
     echo "Processing $fn "
     b=$(basename ${fn})
     b=${b%%".bam"}
     of="${OUTDIR}/toTranscriptome/${b}.hqmapped.bam"
-#    dn=$(dirname "$fn");
-#    of="${dn}/accepted_hits.hqmapped.bam";
+  #    dn=$(dirname "$fn");
+  #    of="${dn}/accepted_hits.hqmapped.bam";
     cat \
         <(samtools view -H "${fn}") \
         <(cat "${fn}" | samtools view -q10 -F260 -) \
