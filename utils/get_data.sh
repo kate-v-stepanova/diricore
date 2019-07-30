@@ -26,4 +26,7 @@ mkdir -p /icgc/dkfzlsdf/analysis/OE0532/$dataset_id/analysis/input/merged
 mkdir -p /icgc/dkfzlsdf/analysis/OE0532/$dataset_id/analysis/output/demultiplexed
 mkdir -p /icgc/dkfzlsdf/analysis/OE0532/$dataset_id/analysis/output/umi_extract/logs
 
+touch /icgc/dkfzlsdf/analysis/OE0532/$dataset_id/analysis/input/metadata/bc_file.txt
+touch /icgc/dkfzlsdf/analysis/OE0532/$dataset_id/analysis/input/metadata/rpf_density_contrasts.tsv
+touch /icgc/dkfzlsdf/analysis/OE0532/$dataset_id/analysis/input/metadata/rpf_density_samplenames.tsv
 
