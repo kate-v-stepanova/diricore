@@ -20,6 +20,9 @@ gtf_file = paste(static_dir, "gencode.annotation.gtf", sep="/")
 bamfolder = paste(project_dir, "analysis/input/periodicity_bam", sep="/")
 data_dir = paste(project_dir, "analysis/output/transcript_regions", sep="/")
 
+if (!file.exists(bamfolder)) {
+  stop(paste("No input files in ", bamfolder))
+}
 
 print("Creating output directory")
 dir.create(data_dir)
