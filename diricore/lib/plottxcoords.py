@@ -33,9 +33,9 @@ def get_means(samples, codongroups, h5mapsfn, min_reads, intersect=False, smooth
         W = array([0.0, 1.0, 0.0])
 
     h5countfiles = {fn: h5py.File(fn, 'r') for fn in set([h5fn for (h5fn, _, _) in samples])}
-
+    print("Processing samples: ", h5countfiles[h5fn]["counts"].keys())    
     # NOTE: here usually a good chunk of memory is needed.. (~700Mb per sample)
-    cs = [h5countfiles[h5fn]["counts"][sampleid][:] for (h5fn, sampleid, _) in samples]
+    cs = [h5countfiles[h5fn]["counts"].get(sampleid)[:] for (h5fn, sampleid, _) in samples]
 
     widths = [h5maps["codonmap"][x].attrs["region_width"] for x in set(chain(*codongroups))]
     assert len(set(widths)) == 1
@@ -71,6 +71,8 @@ def read_sampleinfo(fn, cols_num=None):
     for line in fh:
         line = line.rstrip()
         fields = line.split("\t")
+        cont, samp, col = fields
+        fields = (samp, cont, col)
         if cols_num is not None and len(fields) > cols_num:
             fields = fields[0:cols_num]
         samples.append(tuple(fields))
