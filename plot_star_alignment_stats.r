@@ -19,10 +19,15 @@ INDIR=paste(PROJECT_DIR, "analysis/output/alignment_stats", sep="/")
 OUTDIR=paste(PROJECT_DIR, "analysis/output/figures", sep="/")
 BC_SPLIT_FILE=paste(PROJECT_DIR, "analysis/output/bc_split_stats.txt", sep="/")
 cutadapt_file=paste(PROJECT_DIR, "analysis/output/cutadapt_plot_stats.txt", sep="/")
+hq_file = paste(INDIR, "hq_stats.txt", sep="/")
+hq_unique = paste(INDIR, "hq_unique_stats.txt", sep="/")
+all_stats = paste(INDIR, "all_stats.txt", sep="/")
+all_unique = paste(INDIR, "all_unique_stats.txt", sep="/")
+rrna_file = paste(INDIR, "rrna_stats.txt", sep="/")
+trna_file = paste(INDIR, "trna_stats.txt", sep="/")
 
-print("Please create analysis/output/cutadapt_plot_stats.txt file with the command ./utils/extract_cutadapt_stats.sh")
+
 print("Parsing cutadapt_plot_stats.txt")
-
 lines <- read.csv(file=cutadapt_file, sep="\t", colClasses=c("NULL", NA), header=F)
 no_adapt = lines[1,] - lines[2,]
 too_short = strtoi(lines[3,])
@@ -49,101 +54,75 @@ myplot <- ggplot(mydt, aes(x=dataset_id, y=Count/1000000, fill=Barcode)) +
 print("Saving BCsplit_stats.pdf")
 ggsave(paste(OUTDIR, '/BCsplit_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
 
-# Pipeline stats
+# Alignment stats
 
-# HQ Aligns
-print("HQ Aligns")
-mydt <- fread(paste(INDIR, '/alignment_hq_stats.txt', sep=""), col.names=c('file', 'HQ_algs'))
-mydt[,file:=basename(file)]
-mydt[,file:= gsub('_toGenome.hqmapped.bam',"\\1",file)]
+# rRNA stats
+print("rRNA stats")
+mydt <- fread(rrna_file, col.names = c('sample', 'rrna'))
 
-# Dedup Aligns
-print("Dedup Aligns")
-dedup_file = paste(INDIR, 'alignment_dedup_stats.txt', sep="/")
-if(!file.exists(dedup_file) | file.info(dedup_file)$size == 0) {
-  mydt$Dedup_algs <- 0 
+# tRNA
+print("tRNA stats")
+dt <- fread(trna_file, col.names = c('sample', 'trna'))
+mydt <- merge(mydt,dt, by='sample')
+
+
+# HQ unique
+print("HQ unique")
+if(!file.exists(hq_unique)) {
+  mydt$hq_unique <- 0 
 } else {
-  dt <- fread(dedup_file, col.names=c('file', 'Dedup_algs'))
-  dt[, file:=basename(file)]
-  dt[,file:= gsub('_toGenome.hqmapped_dedup.bam',"\\1",file)]
-  mydt <- merge(mydt,dt, by='file')
+  dt <- fread(hq_unique, col.names=c('sample', 'hq_unique'))
+  mydt <- merge(mydt,dt, by='sample')
 }
 
-# Discarded alignments
-print("Discarded alignments")
-# dt <- fread(paste(INDIR, '/alignment_multimap_stats.txt', sep=""), col.names=c('file', 'N','MAPQ'))
-# dt <- fread(paste(INDIR, '/alignment_multimap_stats.txt', sep=""), col.names=c('file', 'Multimap'))
-# dt[, file:=basename(file)]
-# dt[,file:= gsub('_toGenome.bam',"\\1",file)]
-# dt <- dt[, .(seqnames, file, N)]
-### WHAT IS < 50 ??
-#dt <-  dt[,.(Multimappers=sum(N[MAPQ < 50])), by=.(file)]
+# HQ with dup
+print("HQ stats")
+dt <- fread(hq_file, col.names=c('sample', 'hq_with_dup'))
+mydt <- merge(mydt, dt, by="sample")
+mydt$hq_with_dup <- mydt$hq_with_dup - mydt$hq_unique # hq_with_dup
 
-dt <- fread(paste(INDIR, '/alignment_all_stats.txt', sep=""), col.names=c('file', 'No_HQ'))
-dt[, file:=basename(file)]
-dt[,file:= gsub('_toGenome.bam',"\\1",file)]
+# All unique
+print("All unique")
+if(!file.exists(all_unique)) {
+  mydt$all_unique <- 0 
+} else {
+  dt <- fread(all_unique, col.names = c('sample', 'all_unique'))
+  mydt <- merge(mydt,dt, by='sample')
+}
+mydt$lq_unique <- mydt$all_unique - mydt$hq_unique
+mydt$all_unique <- NULL
 
-mydt <- merge(mydt,dt, by='file')
+# LQ with dup
+print("LQ stats")
+dt <- fread(all_stats, col.names=c('sample', 'all'))
+mydt <- merge(mydt,dt, by='sample')
+mydt$lq_with_dup <- mydt$all - mydt$hq_with_dup - mydt$hq_unique - mydt$lq_unique
+mydt$all <- NULL
 
-mydt$No_HQ <- mydt$No_HQ - mydt$HQ_algs
 
-# rRNA cleanup
-print("rRNA cleanup")
-dt <- fread(paste(INDIR, '/RNA_clenup_stats.txt', sep=""))
-dt[,file:= gsub('dem_(.*)_umi_extracted',"\\1",file)]
-mydt <- merge(mydt,dt, by='file')
+# total reads
+print("total reads")
+dt <- fread(BC_SPLIT_FILE, sep="\t", fill=T, col.names = c('sample', 'bc_split', 'file'))
+dt$file <- NULL
+mydt <- merge(mydt, dt, by='sample')
 
-# Fix file name
-print("Fix file name")
-mydt[,file:= gsub('dem_(.*)_umi_extracted',"\\1",file)]
-
-# Add initial reads (after bc split)
-print("Add initial reads (after bc split)")
-dt[,file:= gsub('(.*)_umi_extracted',"\\1",file)]
-dt <- fread(BC_SPLIT_FILE,fill=T,select = c('Barcode','Count'))
-# dt <- dt[1:nrow(mydt) -1]
-colnames(dt) <- c('file','Initial_reads')
-dt[,file:= gsub('(.*)_trimmed',"\\1",file)]
-# mydt <- merge(mydt,dt, by.x = 0)
-#mydt[["Initial_reads"]] = dt[["Initial_reads"]]
-mydt <- merge(x = mydt, y = dt, by = "file", all.x = TRUE)
+col_order = c("sample", "rrna", "trna", "lq_with_dup", "lq_unique", "hq_with_dup", "hq_unique", "bc_split")
+mydt <- as.data.frame(mydt)[, col_order]
 
 # Create stats
 print("Create diricore stats")
-# print(mydt)
-#' mysum <- mydt[,.(
-#'       'file'=file,
-#'       'rRNA_reads'= Initial_reads - rrnaleft,
-#'       'tRNA_reads' = rrnaleft - trnaleft,
-#'       'Multimapper_reads' = Multimappers,
-#'       #'Other_causes'= trnaleft - HQ_algs - Multimappers,
-#'       'Dup_HQalgs' = HQ_algs - Dedup_algs,
-#'       'Uniq_HQals' = Dedup_algs)]
-mysum <- mydt[,.(
-  'sample'=file,
-  'rRNA_reads'= Initial_reads - rrnaleft,
-  'tRNA_reads' = rrnaleft - trnaleft,
-  'No_HQ' = No_HQ,
-  #'Other_causes'= trnaleft - HQ_algs - Multimap,
-  'HQ_with_duplicates' = HQ_algs - Dedup_algs,
-  'Unique_HQ' = Dedup_algs)]
+write.table(mydt, paste(INDIR, '/diricore_stats.txt',sep=""), sep='\t', quote=F, row.names=F)
 
-mysum$No_HQ <- mydt$Initial_reads - mysum$rRNA_reads - mysum$tRNA_reads - mysum$HQ_with_duplicates - mysum$Unique_HQ
-mysum$Initial_reads <- mydt$Initial_reads
-write.table(mysum, paste(INDIR, '/diricore_stats.txt',sep=""), sep='\t', quote=F, row.names=F)
-
-mysum$Initial_reads <- NULL
 # Check
-rowSums(mysum[,-1]) == mydt$Initial_reads # True
-# mysum <- mydt[,.('file'=file, 'value' = HQ_algs)]
+rowSums(mydt[,-1]) == mydt$bc_split # True
+mydt$bc_split <- NULL
 # Arrange and save
 print("Arrange and save")
-mysum <- melt(mysum,id.vars='sample')
+mysum <- melt(mydt,id.vars='sample')
 
 # Plot
 print("Plot")
 myplot <- ggplot(mysum, aes(x=sample, y=value/1000000,fill=variable))
 myplot <- myplot + geom_bar(stat='identity')+ ggtitle("Unique HQ mapped reads") +
       theme_bw(8) + coord_flip() + ylab('Million reads') + xlab(NULL)
-myplot
 ggsave(paste(OUTDIR, '/Diricore_stats.pdf', sep=""), myplot,width = 5, height = 3)
