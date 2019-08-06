@@ -24,69 +24,28 @@ python_bin="$DIRICORE_DIR/diricore/bin/plot_rpf_transcript_distribution.py";
 
 mkdir -p ${OUTDIR}
 
-#if [[ -f $TX_ALL ]]; then
-#  echo "Processing $TX_ALL"
-#  outfile="${OUTDIR}/all.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
-#  sampinfo=`cat $metafile | while read -a LINE
-#  do
-#	echo -n "'${LINE[0]},${TX_ALL},${LINE[1]},${LINE[2]}' "
-#  done`
-#
-#  eval $(echo python ${python_bin} \
-#       	-m ${minreads} \
-#      	-o $outfile \
-#        -t $TX_INFO_FILE \
-#	"$sampinfo")
-#
-#  echo "Done. File created: $outfile"
-#else
-#  echo "$TX_ALL does not exist. Skipping"
-#fi
-#
-#if [[ -f $TX_ALL_DEDUP ]]; then
-#  echo "Processing $TX_ALL_DEDUP"
-#  outfile="${OUTDIR}/all.dedup.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
-#  sampinfo=`cat $metafile | while read -a LINE
-#  do
-#	echo -n "'${LINE[0]},${TX_ALL_DEDUP},${LINE[1]},${LINE[2]}' "
-#  done`
-#
-#  eval $(echo python ${python_bin} \
-#       	-m ${minreads} \
-#      	-o $outfile \
-#        -t $TX_INFO_FILE \
-#	"$sampinfo")
-#
-#  echo "Done. File created: $outfile"
-#else
-#  echo "$TX_ALL_DEDUP does not exist. Skipping"
-#fi
-
-if [[ ! -f $TX_HQ_DEDUP && -f $TX_HQ ]]; then
-  echo "Processing $TX_HQ"
-  outfile="${OUTDIR}/hq.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
-  sampinfo=`cat $metafile | while read -a LINE
-  do
-	echo -n "'${LINE[0]},${TX_HQ},${LINE[1]},${LINE[2]}' "
-  done`
-
-  eval $(echo python ${python_bin} \
-       	-m ${minreads} \
-      	-o $outfile \
-        -t $TX_INFO_FILE \
-	"$sampinfo")
-
-  echo "Done. File created: $outfile"
-else
-  echo "$TX_HQ does not exist. Skipping"
+# $4 can be: all, all_unique, hq, hq_unique
+infile=$TX_HQ_DEDUP
+file_type="hq_unique"
+if [[ $# -ge 4 ]]; then
+    file_type=$4
+    if [[ $4 == "hq" ]]; then
+        infile=$TX_HQ
+    elif [[ $4 == "all_unique" ]]; then
+        infile=$TX_ALL_DEDUP
+    elif [[ $4 == "all" ]]; then
+        infile=$TX_ALL
+    else 
+        file_type="hq_unique"
+    fi
 fi
 
-if [[ -f $TX_HQ_DEDUP ]]; then
-  echo "Processing $TX_HQ_DEDUP"
-  outfile="${OUTDIR}/hq.dedup.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
+if [[ -f $infile ]]; then
+  echo "Processing $infile"
+  outfile="${OUTDIR}/${file_type}.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
   sampinfo=`cat $metafile | while read -a LINE
   do
-	echo -n "'${LINE[0]},${TX_HQ_DEDUP},${LINE[1]},${LINE[2]}' "
+	echo -n "'${LINE[0]},${infile},${LINE[1]},${LINE[2]}' "
   done`
 
   eval $(echo python ${python_bin} \
@@ -97,5 +56,5 @@ if [[ -f $TX_HQ_DEDUP ]]; then
 
   echo "Done. File created: $outfile"
 else
-  echo "$TX_HQ_DEDUP does not exist. Skipping"
+  echo "$infile does not exist."
 fi
