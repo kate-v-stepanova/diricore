@@ -3,9 +3,15 @@ import os
 import sys
 
 project_id = sys.argv[1]
+bam_type = "hq_unique"
+bam_types = ["all", "all_unique", "hq"]
+if len(sys.argv) >= 3:
+    if sys.argv[2] in bam_types:
+        bam_type = sys.argv[2]
+
 basedir = "/icgc/dkfzlsdf/analysis/OE0532/"
 project_dir = os.path.join(basedir, project_id)
-input_dir = os.path.join(project_dir, "analysis/output/transcript_regions")
+input_dir = os.path.join(project_dir, "analysis/output/transcript_regions", bam_type)
 outfile = os.path.join(input_dir, "reads_per_region.tsv")
 
 files = os.listdir(input_dir)

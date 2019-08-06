@@ -11,17 +11,50 @@ args = commandArgs(trailingOnly=TRUE)
 project_id=args[1]
 genome=args[2]
 
+bam_pattern = "*_toTranscriptome\\.hqmapped_dedup\\.bam$"
+bam_type = "hq_unique"
+# args[3] can be: all, all_unique (all_dedup), hq, hq_unique (hq_dedup)
+if (length(args) >= 3) {
+  if (args[3] == "all") {
+    bam_pattern = "*_toTranscriptome\\.bam$"
+    bam_type = "all"
+  } else if (args[3] == "all_unique" | args[3] == "all_dedup") {
+    bam_pattern = "*_toTranscriptome_dedup\\.bam$"
+    bam_type = "all_unique"
+  } else if (args[3] == "hq") {
+    bam_pattern = "*_toTranscriptome\\.hqmapped\\.bam$"
+    bam_type = "hq"
+  } # else: default
+}
+
 base_dir = "/icgc/dkfzlsdf/analysis/OE0532"
 project_dir = paste(base_dir, project_id, sep="/")
 static_dir = paste(base_dir, "static", genome, sep="/")
 transcriptome_fasta = paste(static_dir, "transcripts.fa", sep="/")
 gtf_file = paste(static_dir, "gencode.annotation.gtf", sep="/")
 
-bamfolder = paste(project_dir, "analysis/input/periodicity_bam", sep="/")
-data_dir = paste(project_dir, "analysis/output/transcript_regions", sep="/")
+bamfolder = paste(project_dir, "analysis/input/periodicity_bam", bam_type, sep="/")
+transcriptome_dir = paste(project_dir, "analysis/output/alignments/toTranscriptome", sep="/")
 
+data_dir = paste(project_dir, "analysis/output/transcript_regions", bam_type, sep="/")
+
+# Creating symlinks
+print("Creating symlinks")
 if (!file.exists(bamfolder)) {
-  stop(paste("No input files in ", bamfolder))
+  # create files
+  dir.create(bamfolder, recursive=T)
+  bamfiles <- list.files(path = transcriptome_dir, pattern = bam_pattern)
+  for (filename in bamfiles) {
+    samplename = gsub(bam_pattern, "", filename)
+    bamfile = paste(transcriptome_dir, filename, sep="/")
+    print(paste("Processing: ", bamfile))
+    outfile = paste(bamfolder, "/", samplename, ".bam", sep="")
+    if (file.symlink(bamfile, outfile)) {
+      print(paste("Created file:", outfile))
+    } else {
+      print(paste("Something went wrong while creating", outfile))
+    }
+  }
 }
 
 print("Creating output directory")

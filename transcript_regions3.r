@@ -10,13 +10,20 @@ library(dplyr)
 args = commandArgs(trailingOnly=TRUE)
 project_id=args[1]
 genome=args[2]
+bam_type = "hq_unique"
+bam_types = c("hq", "all", "all_unique")
+if (length(args) >= 3) {
+  if (args[3] %in% bam_types) {
+    bam_type = args[3]
+  }
+}
 
 base_dir = "/icgc/dkfzlsdf/analysis/OE0532"
 project_dir = paste(base_dir, project_id, sep="/")
-data_dir = paste(project_dir, "analysis/output/transcript_regions", sep="/")
+data_dir = paste(project_dir, "analysis/output/transcript_regions", bam_type, sep="/")
 input_file = paste(data_dir, "reads_per_region.tsv", sep="/")
 
-plot_dir = paste(project_dir, "analysis/output/figures/transcript_regions", sep="/")
+plot_dir = paste(project_dir, "analysis/output/figures/transcript_regions", bam_type, sep="/")
 plot_file = paste(plot_dir, "/", project_id, "_transcript_regions.pdf", sep="")
 percentage_plot = paste(plot_dir, "/", project_id, "_transcript_regions_percentage.pdf", sep="")
 
