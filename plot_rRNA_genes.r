@@ -20,8 +20,8 @@ if (length(args) <2 ) {
     }
 }
 
-require(ggplot2)
-require(data.table)
+library(ggplot2)
+library(data.table)
 
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR=paste(BASE_DIR, dataset_id, sep="/")
@@ -35,10 +35,14 @@ if (trna) {
 
 sample_files = list.files(INDIR, pattern="*_reads_per_gene.txt")
 
+# create output dirs
+dir.create(OUTDIR)
+
 for (filename in sample_files) {
     print(paste("Reading", filename))
     sample_file = paste(INDIR, filename, sep="/")
     sample_name = gsub("_reads_per_gene.txt", "", filename)
+    sample_name = gsub("grouped_", "", sample_name)
     outfile = paste(OUTDIR, "/", sample_name, ".pdf", sep="")
     rrna_dt <- fread(sample_file, header=TRUE)
     if (trna) { 

@@ -13,7 +13,9 @@ if len(sys.argv) <= 2:
     exit(1)
 
 project_id = sys.argv[1]
-trna = sys.argv[2]
+trna = "rrna"
+if len(sys.argv) >= 4:
+    trna = sys.argv[3]
 if trna == "trna":
     trna = True
     prefix = "tRNA"
@@ -22,8 +24,8 @@ else:
     prefix = "rRNA"
 
 genome = "hg19"
-if len(sys.argv) >= 4:
-    genome = sys.argv[3].strip()
+if len(sys.argv) >= 3:
+    genome = sys.argv[2].strip()
 
 BASE_DIR = "/icgc/dkfzlsdf/analysis/OE0532"
 DIRICORE_PATH = "/home/e984a/diricore"
@@ -35,10 +37,12 @@ if trna:
     input_dir = os.path.join(project_dir, "analysis/output/trna_fragments")
 else:
     input_dir = os.path.join(project_dir, "analysis/output/rrna_fragments")
+    
 print(input_dir)
 # these files are manually created from UCSC browser
 blat_results = glob.glob(os.path.join(input_dir, "*.parsed_psl.txt"))
 rrna_genes_df = pd.read_csv(rrna_genes_file, sep="\t")
+# import pdb; pdb.set_trace()
 for infile in blat_results:
     print("Processing ", infile)
     output_file = infile.replace('.parsed_psl.txt', '_reads_per_gene.txt')
@@ -63,7 +67,8 @@ for infile in blat_results:
         # now we extract from df only the hits which belong to this gene
         # we check that the start and end position of the hit is between start and end position of the gene
 #        gene_df = df.loc[(df.get('chrom') == gene.get('chrom')) & (df.get('start') >= gene.get('start')) & (df.get('end') <= gene.get('end'))]
-        gene_df = df.loc[df.get('chrom') == gene.get('fasta_id')]
+        #gene_df = df.loc[df.get('chrom') == gene.get('fasta_id')]
+        gene_df = df.loc[df.get('chrom').str.endswith(gene.get('gene_name'))]
         # now we can remove duplicates. Assuming there is no overlap betweeen the regions of rRNA genes, we can safely remove the duplicates so that each sequence will only be counted once
         gene_df = gene_df.drop_duplicates(subset="counts_sequence", keep="first")
         gene_name = gene.get('gene_name')

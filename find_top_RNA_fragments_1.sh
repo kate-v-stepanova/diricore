@@ -2,13 +2,18 @@
 
 
 dataset_id=$1
-
+genome="hg19"
 if [[ $# -ge 2 ]]; then
-  counts=$2
+  genome=$2
+fi
+
+
+if [[ $# -ge 3 ]]; then
+  counts=$3
 else
   # I guess this is correct. 
   echo "WARNING: use $0 100000 to filter out the reads with less than 100000. For miseq run this number should be much less. If you don't enter this number, the default value (100 000) will be used. But then you might get an empty run_UMIs_top_rRNA_seqs.txt file"
-  counts=100
+  counts=1
 fi
 
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
@@ -33,7 +38,7 @@ if [[ $# -ge 3 ]]; then
    fi
 fi
 
-REF="$DIRICORE_DIR/staticdata/human/${prefix}s"
+REF="$BASE_DIR/static/$genome/${prefix}s"
 
 mkdir -p $OUTDIR
 

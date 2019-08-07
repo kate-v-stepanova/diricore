@@ -9,8 +9,8 @@ PROJECT_PATH="$BASE_PATH/$project_id"
 PSL_PARSER="$DIRICORE_PATH/utils/parse_psl.py"
 
 genome="hg19"
-if [[ $# -ge 3 ]]; then
-   genome=$3
+if [[ $# -ge 2 ]]; then
+   genome=$2
 fi
 
 GENOME_PATH="$BASE_PATH/static/$genome/rRNA_genes.2bit"
@@ -18,8 +18,8 @@ GENOME_PATH="$BASE_PATH/static/$genome/rRNA_genes.2bit"
 
 trna=0
 prefix="rRNA"
-if [[ $# -ge 2 ]]; then
-   trna=$2
+if [[ $# -ge 3 ]]; then
+   trna=$3
    if [[ $trna == 'trna' ]]; then
        prefix="tRNA"
        INDIR="$PROJECT_PATH/analysis/output/trna_fragments"
@@ -31,11 +31,15 @@ fi
 
 for fasta_file in $(ls $INDIR/*.fasta); do
     sample_name=$(basename $fasta_file)
-    sample_name=${sample_name%top_${prefix}_seqs.fasta}
+    sample_name=${sample_name%_top_${prefix}_seqs}
+    sample_name=${sample_name%.fasta}
+    sample_name=${sample_name#"grouped_"}
     psl_file="$INDIR/${sample_name}.${prefix}_aligned.with_header.psl"
-    psl_no_header="$INDIR/${sample_name}.${prefix}_aligned.psl"
+    psl_no_header="$INDIR/${sample_name}.psl"
     echo "Alignment of $fasta_file";
-    $blat_path -stepSize=5 -repMatch=2253 -minScore=0 -minIdentity=0 $GENOME_PATH $fasta_file $psl_file
+    $blat_path -stepSize=5 -repMatch=4096 -minScore=0 -minIdentity=0 $GENOME_PATH $fasta_file $psl_file
+    #$blat_path -minIdentity=80 $GENOME_PATH $fasta_file $psl_file
+
     # remove first 5 lines (header)
     tail -n +6 $psl_file > $psl_no_header
     rm $psl_file
