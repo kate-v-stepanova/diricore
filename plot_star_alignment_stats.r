@@ -54,16 +54,27 @@ myplot <- ggplot(mydt, aes(x=dataset_id, y=Count/1000000, fill=Barcode)) +
 print("Saving BCsplit_stats.pdf")
 ggsave(paste(OUTDIR, '/BCsplit_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
 
+samples = mydt$Barcode
+mydt <- NULL
+mydt$sample <- samples
 # Alignment stats
-
 # rRNA stats
 print("rRNA stats")
-mydt <- fread(rrna_file, col.names = c('sample', 'rrna'))
+if(!file.exists(rrna_file)) {
+  mydt$rrna <- 0 
+} else {
+  mydt <- fread(rrna_file, col.names = c('sample', 'rrna'))
+}
 
 # tRNA
 print("tRNA stats")
-dt <- fread(trna_file, col.names = c('sample', 'trna'))
-mydt <- merge(mydt,dt, by='sample')
+if(!file.exists(trna_file)) {
+  mydt$trna <- 0 
+} else {
+  dt <- fread(trna_file, col.names = c('sample', 'trna'))
+  mydt <- merge(mydt,dt, by='sample')
+}
+
 
 
 # HQ unique
@@ -123,6 +134,6 @@ mysum <- melt(mydt,id.vars='sample')
 # Plot
 print("Plot")
 myplot <- ggplot(mysum, aes(x=sample, y=value/1000000,fill=variable))
-myplot <- myplot + geom_bar(stat='identity')+ ggtitle("Unique HQ mapped reads") +
+myplot <- myplot + geom_bar(stat='identity')+ ggtitle("Alignment stats") +
       theme_bw(8) + coord_flip() + ylab('Million reads') + xlab(NULL)
 ggsave(paste(OUTDIR, '/Diricore_stats.pdf', sep=""), myplot,width = 5, height = 3)
