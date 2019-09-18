@@ -49,9 +49,15 @@ run_prep() {
 }
 export -f run_prep
 for f in `ls ${INDIR}/*.fastq.gz`; do
-  echo "Preprocessing ${f}";
-  run_prep ${f};
-  echo "Done ${f}";
+  fn=$(basename $f)
+  of=${OUTDIR}/$fn
+  if [[ ! -f $of ]]; then
+    echo "Preprocessing ${f}";
+    run_prep ${f};
+    echo "Done ${f}";
+  else
+    echo "File exists! Skipping: $of"
+  fi
 done;
 
 echo "Done with preprocessing";
