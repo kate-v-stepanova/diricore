@@ -49,7 +49,7 @@ mydt <- fread(BC_SPLIT_FILE, sep="\t", fill=T)
 mydt <-mydt[!(mydt$Barcode=="total"),]
 myplot <- ggplot(mydt, aes(x=dataset_id, y=Count/1000000, fill=Barcode)) + 
                 geom_bar(stat='identity',position='stack')+
-                scale_fill_manual(values=c(brewer.pal(10,'Set3'),'gray30', 'blue'))+
+                scale_fill_manual(values=c(brewer.pal(14,'Set3'),'gray30', 'blue'))+
                 xlab(NULL) + ylab('Million reads') + theme_bw() 
 print("Saving BCsplit_stats.pdf")
 ggsave(paste(OUTDIR, '/BCsplit_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
