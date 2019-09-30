@@ -15,9 +15,9 @@ from matplotlib.font_manager import FontProperties
 import seaborn
 seaborn.reset_orig()
 import numpy
+from matplotlib.ticker import FormatStrFormatter
 
-# sys.path.append(os.path.join(os.path.dirname(__file__), '../lib/'))
-sys.path.append("/home/e984a/diricore/diricore/lib")
+sys.path.append(os.path.join(os.path.dirname(__file__), '../lib/'))
 
 
 from plottxcoords import get_means, read_sampleinfo
@@ -56,7 +56,8 @@ def plot_5p_rpf_density_difference(h5fn, pairs, codongroups, h5mapsfn, min_reads
     fig, axs = pyplot.subplots(len(pairs), len(codongroups), sharex=True, sharey=True, squeeze=False, figsize=figsize)
     for i_pair, pairdata in enumerate(pairs):
         refsampleid, condsampleid, linecolor = pairdata
-        samples = [(h5fn, condsampleid, None), (h5fn, refsampleid, None)]
+        #samples = [(h5fn, condsampleid, None), (h5fn, refsampleid, None)] # this should be correct. because plottxcoords.py.
+        samples = [(h5fn, refsampleid, None), (h5fn, condsampleid, None)]
         means, passing_cutoff = get_means(samples, codongroups, h5mapsfn, min_reads, intersect=True, smooth3nt=True)
 
         assert len(passing_cutoff) == len(codongroups)
@@ -103,6 +104,7 @@ def plot_5p_rpf_density_difference(h5fn, pairs, codongroups, h5mapsfn, min_reads
             ax = axs[i][j]
             pyplot.setp(ax.get_yticklabels(), visible=True)
             ax.set_yticklabels(ax.get_yticks(), fontproperties=YTICKFONT)
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f')) # 2 decimals
 
     for i in xrange(len(pairs)):
         for j in xrange(len(codongroups)):
@@ -110,7 +112,6 @@ def plot_5p_rpf_density_difference(h5fn, pairs, codongroups, h5mapsfn, min_reads
             rectheight = (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.025
             rectbottom = ax.get_ylim()[0] + 0.4 * rectheight
             ax.add_patch(Rectangle((0.5, rectbottom), 3, rectheight, facecolor="black", edgecolor="none"))
-
     return fig
 
 
@@ -145,11 +146,13 @@ def main():
         ylim = map(float, ylim.split(","))[:2]
 
     codongroups = map(lambda s: set(s.split(",")), args.codongroups)
+    print(codongroups)
     # Note (APU): condongroups must be a feature to be able to analyze two codons together
     # But in general, this will generate a list  containing single codon sets
     # If for example the input is "TTT,CCC ATG" , it will make: ( ('TTT','CCC') , (ATG) 
 
     fig = plot_5p_rpf_density_difference(args.h5file[0], pairs, codongroups, h5mapsfn, args.min_reads, ylim, sample_names, args.centered_at_x0)
+
     fig.savefig(args.outfile, format="pdf")
 
     return
