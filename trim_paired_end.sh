@@ -16,11 +16,6 @@ else
     exit
 fi
 
-subset=""
-if [[ $# -ge 2 ]]; then
-    subset=$2
-fi
-
 demultiplexed_path="$project_path/analysis/output/demultiplexed"
 umi_extract_path="$project_path/analysis/output/umi_extract"
 umi_extract_logs="${umi_extract_path}/logs"
@@ -35,7 +30,7 @@ bc_split_stats="$project_path/analysis/output/bc_split_stats.txt"
 stats_dir="$project_path/analysis/output"
 
 adapter_sequence="AGATCGGAAGAGCACACGTCTGAA"
-# adapter_sequence="TTCAGACGTGTGCTCTTCCGATCT" # reverse
+reversed_sequence="TTCAGACGTGTGCTCTTCCGATCT" # reverse
 
 bc_pattern="NNNNNNNNNN" # random sequence 5nt long + barcode
 barcode_splitter="$diricore_path/programs/fastx_toolkit/fastx_barcode_splitter.pl"
@@ -51,29 +46,38 @@ if [[ $# -ge 2 ]]; then
    min_len=$2
 fi
 
-for f in $(ls $merged_path/*$subset*.fastq.gz); do
-    echo "Processing $f"
-    fn=$(basename $f);
-    fn=${fn%.fastq.gz}
-    trimmed_file="$merged_path/${fn}_trimmed.fastq.gz"
-    if [[ -f $trimmed_file ]]; then
-        echo "File exists! $trimmed_file"
+
+r1=$merged_path/R1.fastq.gz
+r2=$merged_path/R2.fastq.gz
+
+
+
+trimmed_file1="$merged_path/R1_trimmed.fastq.gz"
+trimmed_file2=$merged_path/R2_trimmed.fastq.gz
+
+    if [[ -f $trimmed_file1 ]]; then
+        echo "File exists! $trimmed_file1"
     else
-        cutadapt_trimming_stats="$stats_dir/${fn}_cutadapt_trimming_stats.txt"
-        bc_split_stats="$stats_dir/${fn}_bc_split_stats.txt"
-        bc_file="$bc_path/bc_file_${fn}.txt"
+        cutadapt_trimming_stats="$stats_dir/cutadapt_trimming_stats.txt"
+        bc_split_stats="$stats_dir/bc_split_stats_R1.txt"
+        bc_stats2=$stats_dir/bc_split_stats_R2.txt
+        bc_file="$bc_path/bc_file.txt"
     #    echo "gzip -dc $merged_file | cutadapt -u 3 -O 7 -m $min_len -j 10 -a $adapter_sequence --discard-untrimmed -o $trimmed_file - > $cutadapt_trimming_stats"
     #    gzip -dc $merged_file | cutadapt -u 3 -O 7 -m $min_len -j 10 -a $adapter_sequence --discard-untrimmed -o $trimmed_file - > $cutadapt_trimming_stats
-        echo "Removing adapter: gzip -dc $f | cutadapt -u 3 -O 7 -m $min_len -j 10 -a $adapter_sequence --discard-untrimmed -o $trimmed_file - > $cutadapt_trimming_stats"
+        echo "Removing adapter: cutadapt -u 3 -O 5 -m $min_len -j 10 -a $adapter_sequence -A $reversed_sequence --discard-untrimmed -o $trimmed_file1 -p $trimmed_file2 $r1 $r2 - > $cutadapt_trimming_stats"
 
-        gzip -dc $f | cutadapt -u 3 -O 5 -m $min_len -j 10 -a $adapter_sequence --discard-untrimmed -o $trimmed_file - > $cutadapt_trimming_stats
+        cutadapt -u 3 -O 5 -m $min_len -j 10 -a $adapter_sequence -A $reversed_sequence --discard-untrimmed -o $trimmed_file1 -p $trimmed_file2 $r1 $r2
         echo "Removing adapter done. Outfiles: $trimmed_file. Stats file: $cutadapt_trimming_stats"
     fi
-    echo "Demultiplexing: cat $trimmed_file | $barcode_splitter --bcfile $bc_file --prefix $demultiplexed_path/dem_ --suffix .fastq --eol > $bc_split_stats"
-    zcat $trimmed_file | $barcode_splitter --bcfile $bc_file --prefix $demultiplexed_path/dem_  --suffix .fastq --eol > $bc_split_stats
+    echo "Demultiplexing: cat $trimmed_file1 | $barcode_splitter --bcfile $bc_file --prefix $demultiplexed_path/dem_R1_ --suffix .fastq --eol > $bc_split_stats"
+    zcat $trimmed_file1 | $barcode_splitter --bcfile $bc_file --prefix $demultiplexed_path/dem_R1_  --suffix .fastq --eol > $bc_split_stats
+    mv $demultiplexed_path/dem_unmatched.fastq $demultiplexed_path/dem_unmatched_R1.fastq
+
+    echo "Demultiplexing: cat $trimmed_file2 | $barcode_splitter --bcfile $bc_file --prefix $demultiplexed_path/dem_R2_ --suffix .fastq --eol > $bc_stats2"
+    zcat $trimmed_file2 | $barcode_splitter --bcfile $bc_file --prefix $demultiplexed_path/dem_R2_  --suffix .fastq --eol > $bc_stats2
+     mv $demultiplexed_path/dem_unmatched.fastq $demultiplexed_path/dem_unmatched_R2.fastq
+
     echo "Demultiplexing done"
-    mv $demultiplexed_path/dem_unmatched.fastq $demultiplexed_path/dem_unmatched_${fn}.fastq
-done
 # cat $trimmed_file | $barcode_splitter --bcfile $bc_file --prefix $demultiplexed_path/dem_ --suffix .fastq --eol > $bc_split_stats
 
 # remove umi (any random sequence of 5-nt length)

@@ -19,10 +19,9 @@ TX_HQ="$PROJECT_DIR/analysis/output/rpf_5p_density/${project}.txcoord_counts.hq.
 TX_HQ_DEDUP="$PROJECT_DIR/analysis/output/rpf_5p_density/${project}.txcoord_counts.hq.dedup.${minreads}.hdf5";
 TX_INFO_FILE="$BASE_DIR/static/$genome/transcript_data.hdf5"
 
-DIRICORE_DIR="/home/e984a/diricore"
+DIRICORE_DIR="/icgc/dkfzlsdf/analysis/OE0532/software/diricore"
 python_bin="$DIRICORE_DIR/diricore/bin/plot_rpf_transcript_distribution.py";
 
-mkdir -p ${OUTDIR}
 
 # $4 can be: all, all_unique, hq, hq_unique
 infile=$TX_HQ_DEDUP
@@ -39,10 +38,21 @@ if [[ $# -ge 4 ]]; then
         file_type="hq_unique"
     fi
 fi
+p_id=${dataset_id/"/"/"_"}
+outfile="${OUTDIR}/${file_type}.${p_id}.${minreads}.rpf_transcript_distribution_plot.${p_id}.pdf"
+
+if [[ $# -ge 5 ]]; then
+   subset=$5
+   metafile="$PROJECT_DIR/analysis/input/metadata/${subset}_rpf_density_samplenames.tsv"
+
+   outfile="${OUTDIR}/${file_type}.${subset}.${p_id}.${minreads}.rpf_transcript_distribution_plot.${p_id}.pdf"
+fi
+
+mkdir -p ${OUTDIR}
+
 
 if [[ -f $infile ]]; then
   echo "Processing $infile"
-  outfile="${OUTDIR}/${file_type}.${project}.${minreads}.rpf_transcript_distribution_plot.${dataset_id}.pdf"
   sampinfo=`cat $metafile | while read -a LINE
   do
 	echo -n "'${LINE[0]},${infile},${LINE[1]},${LINE[2]}' "

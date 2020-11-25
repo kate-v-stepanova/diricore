@@ -61,6 +61,9 @@ counts_df$gene_id <- NULL
 
 
 countData <- as.matrix(counts_df)
+
+# controls = c('159_7_mC', 'MRC5_G_GFP')
+# countData <- countData[!apply(countData[,controls], 1, function(row) all(row<=20)),]
 countData <- countData[!apply(countData[,samples], 1, function(row) all(row<=30)),]
 colData = NULL
 colData$v1 <- as.vector(samples)
@@ -81,10 +84,17 @@ all_de_results$a <- counts_df[[samplename]]
 only_coding_dt = NULL
 only_coding_dt$a <- counts_df[[samplename]]
 list_of_contrasts = c()
+
+# MA plot
 for(i in 1:nrow(contrasts_dt)) {
   row <- contrasts_dt[i,]
   contrast_name <- paste(row$sample, "__vs__", row$control, sep="")
   list_of_contrasts <- c(list_of_contrasts, contrast_name)
+}
+
+for(i in 1:nrow(contrasts_dt)) {
+  row <- contrasts_dt[i,]
+  contrast_name <- paste(row$sample, "__vs__", row$control, sep="")
   DEresults = results(dds, contrast = c("v1", row$sample, row$control))
   DEresults <- DEresults[order(DEresults$pvalue),]
   de_results <- as.data.frame(DEresults)
@@ -96,7 +106,7 @@ for(i in 1:nrow(contrasts_dt)) {
   # drop non-coding genes (without name)
   coding_dt <- de_results[!is.na(de_results$gene_name),]
   # duplicated genes concatenate with the transcript_id
-  coding_dt[duplicated(coding_dt$gene_name),]$gene_name <- paste(coding_dt[duplicated(coding_dt$gene_name),]$gene_name, " - ", coding_dt[duplicated(coding_dt$gene_name),]$gene_id, sep="")
+  #coding_dt[duplicated(coding_dt$gene_name),]$gene_name <- paste(coding_dt[duplicated(coding_dt$gene_name),]$gene_name, " - ", coding_dt[duplicated(coding_dt$gene_name),]$gene_id, sep="")
   
   coding_dt$transcript_id <- NULL
   coding_dt <- as.data.frame(coding_dt)
@@ -167,9 +177,9 @@ for (contrast_name in list_of_contrasts) {
 }
 
 # SORT AND WRITE FC OF ALL GENES
-sorted_names <- names(sort(apply(all_fc_df, 1, var), decreasing = T)) # 1 means rows (2 means columns, c(1, 2) means both), 
+sorted_names_all <- names(sort(apply(all_fc_df, 1, var), decreasing = T)) # 1 means rows (2 means columns, c(1, 2) means both), 
                                                                       # var - is a function computing variance across the data frame
-all_fc_df <- all_fc_df[sorted_names,]
+all_fc_df <- all_fc_df[sorted_names_all,]
 all_fc_df$gene_name <- rownames(all_fc_df)
 col_order <- c("gene_name", list_of_contrasts)
 all_fc_df <- all_fc_df[, col_order]
@@ -179,9 +189,9 @@ write.table(all_fc_df, file=fc_data_file, sep="\t", quote = F, row.names = F)
 
 
 # SORT AND WRITE FC OF CODING GENES
-sorted_names <- names(sort(apply(coding_fc, 1, var), decreasing = T)) # 1 means rows (2 means columns, c(1, 2) means both), 
+sorted_names_coding <- names(sort(apply(coding_fc, 1, var), decreasing = T)) # 1 means rows (2 means columns, c(1, 2) means both), 
                                                                       # var - is a function computing variance across the data frame
-coding_fc <- coding_fc[sorted_names,]
+coding_fc <- coding_fc[sorted_names_coding,]
 coding_fc$gene_name <- rownames(coding_fc)
 col_order <- c("gene_name", list_of_contrasts)
 coding_fc <- coding_fc[, col_order]
@@ -240,3 +250,4 @@ pheatmap(coding_fc,
          scale = 'row',
          annotation_col = colData1, 
          show_rownames = T, filename = outfile, width = 16, height = 20)
+

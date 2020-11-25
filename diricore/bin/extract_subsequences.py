@@ -145,7 +145,7 @@ def count_subsequences(readiter, a, tidtc, tid2gid, framefilter, min_aqual):
 
             A[igid, i, icodon] += 1
 
-    log.info("%d alignments processed" % iread)
+    #log.info("%d alignments processed" % iread)
     log.warning("Skipped chroms: %s" % ", ".join(sorted(unmappable_chroms)))
 
     return A

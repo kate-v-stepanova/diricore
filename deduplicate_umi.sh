@@ -32,6 +32,11 @@ if [[ $# -ge 2 ]]; then
 fi 
 echo $bam_type
 
+queue="long"
+if [[ $# -ge 4 ]]; then
+    queue=$4
+fi
+
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR="$BASE_DIR/$dataset_id"
 INDIR="$PROJECT_DIR/analysis/output/alignments/$genome_dir"
@@ -56,7 +61,8 @@ for f in $(ls ${INDIR}/*$bam_pattern); do
     script_file="$script_dir/${samplename}${bam_pattern}.sh"
     ind_file="${OUTDIR}/${samplename}${bam_pattern}.bai";
     if [[ ! -f $ind_file ]]; then
-        echo "samtools index ${f}" > $script_file
+        echo "module load samtools" > $script_file
+        echo "samtools index ${f}" >> $script_file
     fi
     outfile=${OUTDIR}/${samplename}${bam_prefix}
     if [[ ! -f $outfile ]]; then
@@ -70,7 +76,7 @@ done;
 if ls $script_dir/*${bam_pattern}.sh 1> /dev/null 2>&1; then
 #if [[ -f $script_dir/*${bam_pattern}.sh ]]; then
     for f in $(ls $script_dir/*${bam_pattern}.sh); do
-        echo "bsub -q medium $f"
+        echo "bsub -q $queue -R \"rusage[mem=10G]\" $f"
     done
 else
     echo "Files already exist"

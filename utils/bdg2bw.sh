@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIRICORE_PATH="/home/e984a/diricore"
+DIRICORE_PATH="/icgc/dkfzlsdf/analysis/OE0532/software/diricore"
 
 # bedClip installed via conda install to diricore environment
 # bedtools are in diricore/programs
@@ -9,9 +9,9 @@ DIRICORE_PATH="/home/e984a/diricore"
 
 # check commands: slopBed, bedGraphToBigWig and bedClip
 
-which bedtools &>/dev/null || { echo "bedtools not found! Download bedTools: <http://code.google.com/p/bedtools/>"; exit 1; }
-which bedGraphToBigWig &>/dev/null || { echo "bedGraphToBigWig not found! Download: <http://hgdownload.cse.ucsc.edu/admin/exe/>"; exit 1; }
-which bedClip &>/dev/null || { echo "bedClip not found! Download: <http://hgdownload.cse.ucsc.edu/admin/exe/>"; exit 1; }
+#which bedtools &>/dev/null || { echo "bedtools not found! Download bedTools: <http://code.google.com/p/bedtools/>"; exit 1; }
+#which bedGraphToBigWig &>/dev/null || { echo "bedGraphToBigWig not found! Download: <http://hgdownload.cse.ucsc.edu/admin/exe/>"; exit 1; }
+#which bedClip &>/dev/null || { echo "bedClip not found! Download: <http://hgdownload.cse.ucsc.edu/admin/exe/>"; exit 1; }
 
 # end of checking
 
@@ -23,10 +23,10 @@ fi
 F=$1
 G=$2
 
-$DIRICORE_PATH/programs/bedtools slop -i ${F} -g ${G} -b 0 | bedClip stdin ${G} ${F}.clip
+$DIRICORE_PATH/programs/bedtools slop -i ${F} -g ${G} -b 0 | $DIRICORE_PATH/programs/bedClip stdin ${G} ${F}.clip
 
 LC_COLLATE=C sort -k1,1 -k2,2n ${F}.clip > ${F}.sort.clip
 
 $DIRICORE_PATH/programs/bedGraphToBigWig ${F}.sort.clip ${G} ${F/bdg/bw}
 
-rm -f ${F}.clip ${F}.sort.clip
+#rm -f ${F}.clip ${F}.sort.clip

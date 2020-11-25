@@ -51,15 +51,7 @@ for f in $(ls ${INDIR}/*.fastq.gz); do
 	echo "mv $OUTDIR/${b}*.out $OUTDIR/logs/" >> $outfile
 	echo "mv $OUTDIR/${b}*.tab $OUTDIR/logs/" >> $outfile
 
-	## extract hq reads
-	gen_bam="$OUTDIR/toGenome/${b}_toGenome.bam"
-	gen_hq_bam="$OUTDIR/toGenome/${b}_toGenome.hqmapped.bam"
-	trans_bam="${OUTDIR}/toTranscriptome/${b}_toTranscriptome.bam"
-	trans_hq_bam="${OUTDIR}/toTranscriptome/${b}_toTranscriptome.hqmapped.bam"
-	echo "cat <(samtools view -H $gen_bam)  <(cat $gen_bam | samtools view -q10 -F260 -) | samtools view -bS - > $gen_hq_bam " >> $outfile
-	echo "cat <(samtools view -H $trans_bam)  <(cat $trans_bam | samtools view -q10 -F260 -) | samtools view -bS - > $trans_hq_bam " >> $outfile
-	
 	chmod +x $outfile
-	echo "bsub -q long  -R \"rusage[mem=7G]\" $outfile"
+	echo "bsub -q long  -R \"rusage[mem=45G]\" $outfile"
 done
 

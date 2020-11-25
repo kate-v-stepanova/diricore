@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
-#if (length(args)==0) {
-#   stop(paste("Usage example:", args[0], "14548"))
-#} else if (length(args)==1) {
-#   dataset_id=args[1]
-#}
+if (length(args)==0) {
+  stop(paste("Usage example:", args[0], "14548"))
+} else if (length(args)==1) {
+  dataset_id=args[1]
+}
 
 trna=F
 if (length(args)<2) {

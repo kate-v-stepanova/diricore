@@ -10,6 +10,8 @@ else
    genome="hg19"
 fi
 
+module load bedtools
+
 bam_type="hq_unique"
 bam_pattern="_toGenome.hqmapped_dedup.bam"
 # can be: hq, hq_unique, all, all_unique
@@ -27,7 +29,7 @@ fi
 
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
 PROJECT_DIR="$BASE_DIR/$dataset_id"
-DIRICORE_DIR="/home/e984a/diricore"
+DIRICORE_DIR="/icgc/dkfzlsdf/analysis/OE0532/software/diricore"
 
 chrom_sizes="$BASE_DIR/static/$genome/$genome.chrom.sizes"
 #INDIR="$PROJECT_DIR/analysis/output/tophat_out"

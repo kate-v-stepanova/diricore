@@ -1,24 +1,29 @@
 #!/usr/bin/env Rscript
 
+# R/3.5.1
 library(ggplot2)
 library(data.table)
 library(RColorBrewer)
-
 
 args = commandArgs(trailingOnly=TRUE)
  if (length(args)==0) {
     stop(paste("Usage example:", args[0], "14548"))
  } else if (length(args)==1) {
-     dataset_id=args[1]
+     project_id=toString(args[1])
  }
 
+subset = ""
+if (length(args) >= 2) {
+  subset = paste(args[2], "_", sep="")
+}
+
 BASE_DIR="/icgc/dkfzlsdf/analysis/OE0532"
-PROJECT_DIR=paste(BASE_DIR, dataset_id, sep="/")
+PROJECT_DIR=paste(BASE_DIR, project_id, sep="/")
 
 INDIR=paste(PROJECT_DIR, "analysis/output/alignment_stats", sep="/")
 OUTDIR=paste(PROJECT_DIR, "analysis/output/figures", sep="/")
-BC_SPLIT_FILE=paste(PROJECT_DIR, "analysis/output/bc_split_stats.txt", sep="/")
-cutadapt_file=paste(PROJECT_DIR, "analysis/output/cutadapt_plot_stats.txt", sep="/")
+BC_SPLIT_FILE=paste(PROJECT_DIR, "/analysis/output/", subset, "bc_split_stats.txt", sep="")
+cutadapt_file=paste(PROJECT_DIR, "/analysis/output/", subset, "cutadapt_plot_stats.txt", sep="")
 hq_file = paste(INDIR, "hq_stats.txt", sep="/")
 hq_unique = paste(INDIR, "hq_unique_stats.txt", sep="/")
 all_stats = paste(INDIR, "all_stats.txt", sep="/")
@@ -26,6 +31,7 @@ all_unique = paste(INDIR, "all_unique_stats.txt", sep="/")
 rrna_file = paste(INDIR, "rrna_stats.txt", sep="/")
 trna_file = paste(INDIR, "trna_stats.txt", sep="/")
 
+dir.create(OUTDIR, recursive=T)
 
 print("Parsing cutadapt_plot_stats.txt")
 lines <- read.csv(file=cutadapt_file, sep="\t", colClasses=c("NULL", NA), header=F)
@@ -36,23 +42,27 @@ mydt <- data.table(
       'Reads' = c('No_adapt','Too_short','Passed'),
       'Counts' = c(no_adapt, too_short, passed))
 
-myplot <- ggplot(mydt,aes(x=dataset_id,y=Counts/1000000, fill=Reads))
+myplot <- ggplot(mydt,aes(x=project_id,y=Counts/1000000, fill=Reads))
 myplot <- myplot + geom_bar(stat='identity',position='stack')+
      theme_bw()+xlab(NULL)+ ylab('Milion Reads')
-ggsave(paste(OUTDIR, '/Cutadapt_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
+if (subset != '') {
+  myplot <- myplot + ggtitle(gsub('_', ' ', subset))
+}
+print(paste('Saving ', OUTDIR, '/', subset, 'Cutadapt_stats.pdf', sep=""))
+ggsave(paste(OUTDIR, '/', subset, 'Cutadapt_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
 
 # BC stats
 print("BC stats")
-
 mydt <- fread(BC_SPLIT_FILE, sep="\t", fill=T)
 # mydt <- mydt[1:nrow(mydt) -1]
 mydt <-mydt[!(mydt$Barcode=="total"),]
-myplot <- ggplot(mydt, aes(x=dataset_id, y=Count/1000000, fill=Barcode)) + 
+mydt$Barcode <- factor(mydt$Barcode, levels = mydt$Barcode) # to keep original order
+myplot <- ggplot(mydt, aes(x=project_id, y=Count/1000000, fill=Barcode)) + 
                 geom_bar(stat='identity',position='stack')+
-                scale_fill_manual(values=c(brewer.pal(14,'Set3'),'gray30', 'blue'))+
+                scale_fill_manual(values=c(brewer.pal(12,'Set3'),'gray30', 'blue'))+
                 xlab(NULL) + ylab('Million reads') + theme_bw() 
-print("Saving BCsplit_stats.pdf")
-ggsave(paste(OUTDIR, '/BCsplit_stats.pdf', sep=""), myplot, width = 2.5, height = 4)
+print(paste("Saving ", OUTDIR, '/', subset, 'BCsplit_stats.pdf', sep=""))
+ggsave(paste(OUTDIR, '/', subset, 'BCsplit_stats.pdf', sep=""), myplot, width = 3.5, height = 4.5)
 
 samples = mydt$Barcode
 mydt <- NULL
@@ -68,14 +78,12 @@ if(!file.exists(rrna_file)) {
 
 # tRNA
 print("tRNA stats")
-if(!file.exists(trna_file)) {
+  if(!file.exists(trna_file)) {
   mydt$trna <- 0 
 } else {
   dt <- fread(trna_file, col.names = c('sample', 'trna'))
   mydt <- merge(mydt,dt, by='sample')
 }
-
-
 
 # HQ unique
 print("HQ unique")
@@ -88,9 +96,14 @@ if(!file.exists(hq_unique)) {
 
 # HQ with dup
 print("HQ stats")
-dt <- fread(hq_file, col.names=c('sample', 'hq_with_dup'))
-mydt <- merge(mydt, dt, by="sample")
-mydt$hq_with_dup <- mydt$hq_with_dup - mydt$hq_unique # hq_with_dup
+if(!file.exists(hq_file)) {
+  mydt$hq_with_dup <- 0 
+} else {
+  dt <- fread(hq_file, col.names=c('sample', 'hq_with_dup'))
+  mydt <- merge(mydt, dt, by="sample")
+  mydt$hq_with_dup <- mydt$hq_with_dup - mydt$hq_unique # hq_with_dup
+}
+
 
 # All unique
 print("All unique")
@@ -99,17 +112,21 @@ if(!file.exists(all_unique)) {
 } else {
   dt <- fread(all_unique, col.names = c('sample', 'all_unique'))
   mydt <- merge(mydt,dt, by='sample')
+  mydt$lq_unique <- mydt$all_unique - mydt$hq_unique
+  mydt$all_unique <- NULL
 }
-mydt$lq_unique <- mydt$all_unique - mydt$hq_unique
-mydt$all_unique <- NULL
 
 # LQ with dup
 print("LQ stats")
-dt <- fread(all_stats, col.names=c('sample', 'all'))
-mydt <- merge(mydt,dt, by='sample')
-mydt$lq_with_dup <- mydt$all - mydt$hq_with_dup - mydt$hq_unique - mydt$lq_unique
-mydt$all <- NULL
-
+if(!file.exists(all_stats)) {
+  mydt$all <- 0 
+  mydt$lq_with_dup <- 0
+} else {
+  dt <- fread(all_stats, col.names=c('sample', 'all'))
+  mydt <- merge(mydt,dt, by='sample')
+  mydt$lq_with_dup <- mydt$all - mydt$hq_with_dup - mydt$hq_unique - mydt$lq_unique
+  mydt$all <- NULL
+}
 
 # total reads
 print("total reads")
@@ -129,11 +146,12 @@ rowSums(mydt[,-1]) == mydt$bc_split # True
 mydt$bc_split <- NULL
 # Arrange and save
 print("Arrange and save")
-mysum <- melt(mydt,id.vars='sample')
+mysum <- reshape2::melt(mydt,id.vars='sample')
 
 # Plot
-print("Plot")
+print(paste("Plot: ", OUTDIR, "/Diricore_stats.pdf", sep=""))
 myplot <- ggplot(mysum, aes(x=sample, y=value/1000000,fill=variable))
 myplot <- myplot + geom_bar(stat='identity')+ ggtitle("Alignment stats") +
       theme_bw(8) + coord_flip() + ylab('Million reads') + xlab(NULL)
 ggsave(paste(OUTDIR, '/Diricore_stats.pdf', sep=""), myplot,width = 5, height = 3)
+

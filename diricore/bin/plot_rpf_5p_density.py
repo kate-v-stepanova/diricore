@@ -43,14 +43,16 @@ def calc_figsize(fignrc, subplotsize, subplotpars):
     return (x, y)
 
 
-def plot_5p_rpf_density_difference(h5fn, pairs, codongroups, h5mapsfn, min_reads=100, ylim=None, prettynames=None, centered_at_x0=False):
+def plot_5p_rpf_density_difference(h5fn, pairs, codongroups, h5mapsfn, min_reads=100, ylim=None, prettynames=None, centered_at_x0=False, range=None):
     # assume samples is list of (cond, ref, color)
     # assume codondata is map of aa -> indexname
-
+    if range is None:
+        min_x = -30
+        max_x = 31
     if centered_at_x0:
-        X = numpy.arange(-30, 31)
+        X = numpy.arange(min_x, max_x)
     else:
-        X = numpy.arange(-30, 31) + 1
+        X = numpy.arange(min_x, max_x) + 1
 
     figsize = calc_figsize((len(pairs), len(codongroups)), SUBPLOTSIZE, SUBPLOTPARS)
     fig, axs = pyplot.subplots(len(pairs), len(codongroups), sharex=True, sharey=True, squeeze=False, figsize=figsize)

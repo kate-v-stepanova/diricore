@@ -130,7 +130,7 @@ def get_averaged_transcript_rpf_densities_mutliple_samples(sampleinfo, infofn, n
 
 
 def plot_average_transcript_rpf_densities(sampleinfo, vc, ws):
-    fig, ax = pyplot.subplots(1, 1, figsize=(10, 3.5))
+    fig, ax = pyplot.subplots(1, 1, figsize=(10, 5))
     xmax = vc.shape[0]
     for isample, sample in enumerate(sampleinfo):
         ax.plot(vc[:, isample], color=sample[3], label="%s\n$n=%d$" % (sample[2], ws[isample]))
@@ -140,9 +140,10 @@ def plot_average_transcript_rpf_densities(sampleinfo, vc, ws):
     ax.get_xticklabels()[-1].set_horizontalalignment("right")
     ax.set_ylabel("Average transcript RPF density\n(intra-gene normalized)")
     legend = ax.legend()
-    pyplot.setp(legend.get_texts(), ha="left", va="bottom")
-    pyplot.setp(ax.get_yticklabels(), weight="bold")
-
+    #pyplot.setp(legend.get_texts(), ha="left", va="bottom")
+    #pyplot.setp(ax.get_yticklabels(), weight="bold")
+    #fig.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+    fig.tight_layout()
     return fig
 
 
@@ -179,7 +180,7 @@ def main():
 
     vc, ws = get_averaged_transcript_rpf_densities_mutliple_samples(sampleinfo, args.txinfofile, DEFAULT_NGRID, args.minreads)
     fig = plot_average_transcript_rpf_densities(sampleinfo, vc, ws)
-    fig.savefig(args.outfile, format="pdf")
+    fig.savefig(args.outfile, format="pdf", bbox_inches='tight')
 
     return
 

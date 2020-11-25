@@ -70,7 +70,9 @@ def read_sampleinfo(fn, cols_num=None):
     samples = []
     for line in fh:
         line = line.rstrip()
+        print(line)
         fields = line.split("\t")
+        print(fields)
         cont, samp, col = fields
         fields = (samp, cont, col)
         if cols_num is not None and len(fields) > cols_num:
