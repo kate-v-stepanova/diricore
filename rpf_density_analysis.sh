@@ -85,6 +85,15 @@ else
     bam_pattern="_toGenome.hqmapped_dedup.bam"
 fi
 
+echo $plots_only
+
+if [[ -f $outfile ]]; then
+    if [ "$plots_only" -eq 0 ]; then
+        echo "File exists: $outfile"
+        echo "Delete the file before proceeding or use option 'plots_only'"
+        exit
+    fi
+fi
 
 if [ "$plots_only" -eq 0 ]; then
  # map RPFs to transcriptome coordinates

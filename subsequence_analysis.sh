@@ -69,6 +69,12 @@ fi
 mkdir -p ${OUTDIR}
 mkdir -p "${PLOTDIR}/subsequence_shift_plots/"
 
+if [[ -f $frame_file ]]; then
+    echo "File exists: $frame_file"
+    echo "Delete file or use option 'plots_only'"
+    exit
+fi
+
 if [ $plots_only -eq 0 ]; then
     # rm -f $OUTDIR/*
     rm -f $frame_file;

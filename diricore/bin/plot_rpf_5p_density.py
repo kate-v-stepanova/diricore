@@ -62,9 +62,11 @@ def plot_5p_rpf_density_difference(h5fn, pairs, codongroups, h5mapsfn, min_reads
         samples = [(h5fn, refsampleid, None), (h5fn, condsampleid, None)]
         means, passing_cutoff = get_means(samples, codongroups, h5mapsfn, min_reads, intersect=True, smooth3nt=True)
 
-        assert len(passing_cutoff) == len(codongroups)
+        if len(passing_cutoff) != len(codongroups):
+             print("passing_cutoff != len(codongroupgs). {} != {}".format(passing_cutoff, len(codongroups)))
 
-        assert means.shape[1] == len(codongroups)
+        if means.shape[1] != len(codongroups):
+             print("means.shape[1] != len(codongroups). {} != {}".format(means.shape[1], len(codongroups)))
 
         for j, codongroup in enumerate(codongroups):
             ws = passing_cutoff[j]
@@ -138,8 +140,15 @@ def main():
         sampleinfo = read_sampleinfo(args.sample_names, cols_num=2)
         sample_names = dict(sampleinfo)
         for (refsampleid, condsampleid, color) in pairs:
-            assert refsampleid in sample_names
-            assert condsampleid in sample_names
+            print_samples = False
+            if refsampleid not in sample_names:
+                 print('WARNING: {} not in sample_names'.format(refsampleid))
+                 print_samples = True
+            if condsampleid not in sample_names:
+                 print('WARNING: {} not in sample_names'.format(condsampleid))
+                 print_samples = True
+            if print_samples:
+                 print(sample_names)
     else:
         sample_names = None
 
